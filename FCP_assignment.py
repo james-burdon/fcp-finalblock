@@ -250,6 +250,11 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-test_defuant", action='store_true', default=False,
 						help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
+	args = parser.parse_args()
+
+	if args.test_defuant == True:
+		test_defuant()
+
 
 if __name__=="__main__":
 	main()
