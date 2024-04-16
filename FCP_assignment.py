@@ -232,7 +232,8 @@ This section contains code for the Defuant Model - task 2 in the assignment
 '''
 
 def defuant_main():
-	#Your code for task 2 goes here
+	# Your code for task 2 goes here
+
 
 def test_defuant():
 	#Your code for task 2 goes here
@@ -246,6 +247,9 @@ This section contains code for the main function- you should write some code for
 
 def main():
 	#You should write some code for handling flags here
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-test_defuant", action='store_true', default=False,
+						help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
 
 if __name__=="__main__":
 	main()
