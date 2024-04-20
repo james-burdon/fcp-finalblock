@@ -1,4 +1,6 @@
-
+import sys
+import numpy as np
+import argparse
 class Node:
 
     def __init__(self, value, number, connections=None):
@@ -7,13 +9,13 @@ class Node:
         self.connections = connections
         self.value = value
 
-    def __repr__(self):
+    def __repr__(self): #built in funcion so that list with objects displays a more understandable format
         return ("Node %d has value %d" % (self.index, self.value))
     
     def get_neighbours(self):
-        return [i for i in range(len(self.connections)) if self.connections[i]==1]
+        return [i for i in range(len(self.connections)) if self.connections[i]==1] #comprehension list that displays all indexes of the neighbours of node chosen
 
-class Queue:
+class Queue: #queue class imported from previous assignments
     def __init__(self):
         self.queue = []
     def push(self, item):
@@ -82,7 +84,7 @@ class Network:
                     
                         #Add the start node to the route
                     route.append(node_to_check)
-                    print(route)
+                    # print(route)
                     total2=len(route)-1
                         #Reverse and print the route
                     total1+=total2
@@ -107,14 +109,14 @@ class Network:
             for s in Biglist[1:]:
                 result.intersection_update(s)
             result.remove(i)
-            print(Biglist,result,'result')
+            # print(Biglist,result,'result')
             count+=len(result)
         return count/len(self.nodes)
 
             
 
 
-    def make_random_network(self, N, connection_probability):
+    def make_random_network(self, N, connection_probability=0.5):
         '''
         This function makes a *random* network of size N.
         Each node is connected to each other node with probability p
@@ -131,33 +133,22 @@ class Network:
                 if np.random.random() < connection_probability:
                     node.connections[neighbour_index] = 1
                     self.nodes[neighbour_index].connections[index] = 1
+        return self
 
-    def plot(self):
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-network", type=int, default=10, help="size of network")
+    parser.add_argument("-test_networks",action='store_true', default=False)
+    args = parser.parse_args()
+    network=Network()
+    network=network.make_random_network(args.network)
+    print('Mean degree=',network.get_mean_degree())
+    print('Mean path length=',network.get_mean_path_length())
+    print('Mean cluster coefficient=', network.get_clustering())
+    if args.test_networks==True:
+        test_networks()
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_axis_off()
-
-        num_nodes = len(self.nodes)
-        network_radius = num_nodes * 10
-        ax.set_xlim([-1.1*network_radius, 1.1*network_radius])
-        ax.set_ylim([-1.1*network_radius, 1.1*network_radius])
-
-        for (i, node) in enumerate(self.nodes):
-            node_angle = i * 2 * np.pi / num_nodes
-            node_x = network_radius * np.cos(node_angle)
-            node_y = network_radius * np.sin(node_angle)
-
-            circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
-            ax.add_patch(circle)
-
-            for neighbour_index in range(i+1, num_nodes):
-                if node.connections[neighbour_index]:
-                    neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
-                    neighbour_x = network_radius * np.cos(neighbour_angle)
-                    neighbour_y = network_radius * np.sin(neighbour_angle)
-
-                    ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
+    
 
 def test_networks():
 
@@ -176,6 +167,7 @@ def test_networks():
     assert(network.get_mean_degree()==2), network.get_mean_degree()
     assert(network.get_clustering()==0), network.get_clustering()
     assert(network.get_mean_path_length()==2.777777777777778), network.get_mean_path_length()
+    print('Tests passed')
 
 if __name__ == '__main__':
-    test_networks()
+    main()
