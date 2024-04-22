@@ -1,285 +1,342 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import random
 
-class Node:
 
-    def __init__(self, value, number, connections=None):
+#
+# class Node:
+#
+#     def __init__(self, value, number, connections=None):
+#
+#         self.index = number
+#         self.connections = connections
+#         self.value = value
+#
+# class Network:
+#
+#     def __init__(self, nodes=None):
+#
+#         if nodes is None:
+#             self.nodes = []
+#         else:
+#             self.nodes = nodes
+#
+#     def get_mean_degree(self):
+#         #Your code  for task 3 goes here
+#
+#     def get_mean_clustering(self):
+#         #Your code for task 3 goes here
+#
+#     def get_mean_path_length(self):
+#         #Your code for task 3 goes here
+#
+#     def make_random_network(self, N, connection_probability):
+#         '''
+#         This function makes a *random* network of size N.
+#         Each node is connected to each other node with probability p
+#         '''
+#
+#         self.nodes = []
+#         for node_number in range(N):
+#             value = np.random.random()
+#             connections = [0 for _ in range(N)]
+#             self.nodes.append(Node(value, node_number, connections))
+#
+#         for (index, node) in enumerate(self.nodes):
+#             for neighbour_index in range(index+1, N):
+#                 if np.random.random() < connection_probability:
+#                     node.connections[neighbour_index] = 1
+#                     self.nodes[neighbour_index].connections[index] = 1
+#
+#     def make_ring_network(self, N, neighbour_range=1):
+#         #Your code  for task 4 goes here
+#
+#     def make_small_world_network(self, N, re_wire_prob=0.2):
+#         #Your code for task 4 goes here
+#
+#     def plot(self):
+#
+#         fig = plt.figure()
+#         ax = fig.add_subplot(111)
+#         ax.set_axis_off()
+#
+#         num_nodes = len(self.nodes)
+#         network_radius = num_nodes * 10
+#         ax.set_xlim([-1.1*network_radius, 1.1*network_radius])
+#         ax.set_ylim([-1.1*network_radius, 1.1*network_radius])
+#
+#         for (i, node) in enumerate(self.nodes):
+#             node_angle = i * 2 * np.pi / num_nodes
+#             node_x = network_radius * np.cos(node_angle)
+#             node_y = network_radius * np.sin(node_angle)
+#
+#             circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
+#             ax.add_patch(circle)
+#
+#             for neighbour_index in range(i+1, num_nodes):
+#                 if node.connections[neighbour_index]:
+#                     neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
+#                     neighbour_x = network_radius * np.cos(neighbour_angle)
+#                     neighbour_y = network_radius * np.sin(neighbour_angle)
+#
+#                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
+#
+# def test_networks():
+#
+#     #Ring network
+#     nodes = []
+#     num_nodes = 10
+#     for node_number in range(num_nodes):
+#         connections = [0 for val in range(num_nodes)]
+#         connections[(node_number-1)%num_nodes] = 1
+#         connections[(node_number+1)%num_nodes] = 1
+#         new_node = Node(0, node_number, connections=connections)
+#         nodes.append(new_node)
+#     network = Network(nodes)
+#
+#     print("Testing ring network")
+#     assert(network.get_mean_degree()==2), network.get_mean_degree()
+#     assert(network.get_clustering()==0), network.get_clustering()
+#     assert(network.get_path_length()==2.777777777777778), network.get_path_length()
+#
+#     nodes = []
+#     num_nodes = 10
+#     for node_number in range(num_nodes):
+#         connections = [0 for val in range(num_nodes)]
+#         connections[(node_number+1)%num_nodes] = 1
+#         new_node = Node(0, node_number, connections=connections)
+#         nodes.append(new_node)
+#     network = Network(nodes)
+#
+#     print("Testing one-sided network")
+#     assert(network.get_mean_degree()==1), network.get_mean_degree()
+#     assert(network.get_clustering()==0),  network.get_clustering()
+#     assert(network.get_path_length()==5), network.get_path_length()
+#
+#     nodes = []
+#     num_nodes = 10
+#     for node_number in range(num_nodes):
+#         connections = [1 for val in range(num_nodes)]
+#         connections[node_number] = 0
+#         new_node = Node(0, node_number, connections=connections)
+#         nodes.append(new_node)
+#     network = Network(nodes)
+#
+#     print("Testing fully connected network")
+#     assert(network.get_mean_degree()==num_nodes-1), network.get_mean_degree()
+#     assert(network.get_clustering()==1),  network.get_clustering()
+#     assert(network.get_path_length()==1), network.get_path_length()
+#
+#     print("All tests passed")
+#
+# '''
+# ==============================================================================================================
+# This section contains code for the Ising Model - task 1 in the assignment
+# ==============================================================================================================
+# '''
+#
+# def calculate_agreement(population, row, col, external=0.0):
+#     '''
+#     This function should return the *change* in agreement that would result if the cell at (row, col) was to flip it's value
+#     Inputs: population (numpy array)
+#             row (int)
+#             col (int)
+#             external (float)
+#     Returns:
+#             change_in_agreement (float)
+#     '''
+#
+#     #Your code for task 1 goes here
+#
+#     return np.random * population
+#
+# def ising_step(population, external=0.0):
+#     '''
+#     This function will perform a single update of the Ising model
+#     Inputs: population (numpy array)
+#             external (float) - optional - the magnitude of any external "pull" on opinion
+#     '''
+#
+#     n_rows, n_cols = population.shape
+#     row = np.random.randint(0, n_rows)
+#     col  = np.random.randint(0, n_cols)
+#
+#     agreement = calculate_agreement(population, row, col, external=0.0)
+#
+#     if agreement < 0:
+#         population[row, col] *= -1
+#
+#     #Your code for task 1 goes here
+#
+# def plot_ising(im, population):
+#     '''
+#     This function will display a plot of the Ising model
+#     '''
+#
+#     new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
+#     im.set_data(new_im)
+#     plt.pause(0.1)
+#
+# def test_ising():
+#     '''
+#     This function will test the calculate_agreement function in the Ising model
+#     '''
+#
+#     print("Testing ising model calculations")
+#     population = -np.ones((3, 3))
+#     assert(calculate_agreement(population,1,1)==4), "Test 1"
+#
+#     population[1, 1] = 1.
+#     assert(calculate_agreement(population,1,1)==-4), "Test 2"
+#
+#     population[0, 1] = 1.
+#     assert(calculate_agreement(population,1,1)==-2), "Test 3"
+#
+#     population[1, 0] = 1.
+#     assert(calculate_agreement(population,1,1)==0), "Test 4"
+#
+#     population[2, 1] = 1.
+#     assert(calculate_agreement(population,1,1)==2), "Test 5"
+#
+#     population[1, 2] = 1.
+#     assert(calculate_agreement(population,1,1)==4), "Test 6"
+#
+#     "Testing external pull"
+#     population = -np.ones((3, 3))
+#     assert(calculate_agreement(population,1,1,1)==3), "Test 7"
+#     assert(calculate_agreement(population,1,1,-1)==5), "Test 8"
+#     assert(calculate_agreement(population,1,1,10)==14), "Test 9"
+#     assert(calculate_agreement(population,1,1,-10)==-6), "Test 10"
+#
+#     print("Tests passed")
+#
+#
+# def ising_main(population, alpha=None, external=0.0):
+#
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111)
+#     ax.set_axis_off()
+#     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
+#
+#     # Iterating an update 100 times
+#     for frame in range(100):
+#         # Iterating single steps 1000 times to form an update
+#         for step in range(1000):
+#             ising_step(population, external)
+#         print('Step:', frame, end='\r')
+#         plot_ising(im, population)
+#
+#
+# '''
+# ==============================================================================================================
+# This section contains code for the Defuant Model - task 2 in the assignment
+# ==============================================================================================================
+# '''
 
-        self.index = number
-        self.connections = connections
-        self.value = value
+def random_person_and_neighbour(grid_size=100):
+    # sets the index of the person being examined
+    rand_person = random.randint(0, (grid_size - 1))
+    # determines whether the neighbour will the right or the left
+    decide_rand_neighbour = random.randint(1, 2)
 
-class Network:
-
-    def __init__(self, nodes=None):
-
-        if nodes is None:
-            self.nodes = []
+    # sets the index of the neighbour
+    if rand_person == 0:
+        rand_neighbour = rand_person + 1
+    elif rand_person == (grid_size - 1):
+        rand_neighbour = rand_person - 1
+    else:
+        if decide_rand_neighbour == 1:
+            rand_neighbour = rand_person - 1
         else:
-            self.nodes = nodes
-
-    def get_mean_degree(self):
-        #Your code  for task 3 goes here
-
-    def get_mean_clustering(self):
-        #Your code for task 3 goes here
-
-    def get_mean_path_length(self):
-        #Your code for task 3 goes here
-
-    def make_random_network(self, N, connection_probability):
-        '''
-        This function makes a *random* network of size N.
-        Each node is connected to each other node with probability p
-        '''
-
-        self.nodes = []
-        for node_number in range(N):
-            value = np.random.random()
-            connections = [0 for _ in range(N)]
-            self.nodes.append(Node(value, node_number, connections))
-
-        for (index, node) in enumerate(self.nodes):
-            for neighbour_index in range(index+1, N):
-                if np.random.random() < connection_probability:
-                    node.connections[neighbour_index] = 1
-                    self.nodes[neighbour_index].connections[index] = 1
-
-    def make_ring_network(self, N, neighbour_range=1):
-        #Your code  for task 4 goes here
-
-    def make_small_world_network(self, N, re_wire_prob=0.2):
-        #Your code for task 4 goes here
-
-    def plot(self):
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_axis_off()
-
-        num_nodes = len(self.nodes)
-        network_radius = num_nodes * 10
-        ax.set_xlim([-1.1*network_radius, 1.1*network_radius])
-        ax.set_ylim([-1.1*network_radius, 1.1*network_radius])
-
-        for (i, node) in enumerate(self.nodes):
-            node_angle = i * 2 * np.pi / num_nodes
-            node_x = network_radius * np.cos(node_angle)
-            node_y = network_radius * np.sin(node_angle)
-
-            circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
-            ax.add_patch(circle)
-
-            for neighbour_index in range(i+1, num_nodes):
-                if node.connections[neighbour_index]:
-                    neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
-                    neighbour_x = network_radius * np.cos(neighbour_angle)
-                    neighbour_y = network_radius * np.sin(neighbour_angle)
-
-                    ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
-
-def test_networks():
-
-    #Ring network
-    nodes = []
-    num_nodes = 10
-    for node_number in range(num_nodes):
-        connections = [0 for val in range(num_nodes)]
-        connections[(node_number-1)%num_nodes] = 1
-        connections[(node_number+1)%num_nodes] = 1
-        new_node = Node(0, node_number, connections=connections)
-        nodes.append(new_node)
-    network = Network(nodes)
-
-    print("Testing ring network")
-    assert(network.get_mean_degree()==2), network.get_mean_degree()
-    assert(network.get_clustering()==0), network.get_clustering()
-    assert(network.get_path_length()==2.777777777777778), network.get_path_length()
-
-    nodes = []
-    num_nodes = 10
-    for node_number in range(num_nodes):
-        connections = [0 for val in range(num_nodes)]
-        connections[(node_number+1)%num_nodes] = 1
-        new_node = Node(0, node_number, connections=connections)
-        nodes.append(new_node)
-    network = Network(nodes)
-
-    print("Testing one-sided network")
-    assert(network.get_mean_degree()==1), network.get_mean_degree()
-    assert(network.get_clustering()==0),  network.get_clustering()
-    assert(network.get_path_length()==5), network.get_path_length()
-
-    nodes = []
-    num_nodes = 10
-    for node_number in range(num_nodes):
-        connections = [1 for val in range(num_nodes)]
-        connections[node_number] = 0
-        new_node = Node(0, node_number, connections=connections)
-        nodes.append(new_node)
-    network = Network(nodes)
-
-    print("Testing fully connected network")
-    assert(network.get_mean_degree()==num_nodes-1), network.get_mean_degree()
-    assert(network.get_clustering()==1),  network.get_clustering()
-    assert(network.get_path_length()==1), network.get_path_length()
-
-    print("All tests passed")
-
-'''
-==============================================================================================================
-This section contains code for the Ising Model - task 1 in the assignment
-==============================================================================================================
-'''
-
-def calculate_agreement(population, row, col, external=0.0):
-    '''
-    This function should return the *change* in agreement that would result if the cell at (row, col) was to flip it's value
-    Inputs: population (numpy array)
-            row (int)
-            col (int)
-            external (float)
-    Returns:
-            change_in_agreement (float)
-    '''
-
-    #Your code for task 1 goes here
-
-    return np.random * population
-
-def ising_step(population, external=0.0):
-    '''
-    This function will perform a single update of the Ising model
-    Inputs: population (numpy array)
-            external (float) - optional - the magnitude of any external "pull" on opinion
-    '''
-
-    n_rows, n_cols = population.shape
-    row = np.random.randint(0, n_rows)
-    col  = np.random.randint(0, n_cols)
-
-    agreement = calculate_agreement(population, row, col, external=0.0)
-
-    if agreement < 0:
-        population[row, col] *= -1
-
-    #Your code for task 1 goes here
-
-def plot_ising(im, population):
-    '''
-    This function will display a plot of the Ising model
-    '''
-
-    new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
-    im.set_data(new_im)
-    plt.pause(0.1)
-
-def test_ising():
-    '''
-    This function will test the calculate_agreement function in the Ising model
-    '''
-
-    print("Testing ising model calculations")
-    population = -np.ones((3, 3))
-    assert(calculate_agreement(population,1,1)==4), "Test 1"
-
-    population[1, 1] = 1.
-    assert(calculate_agreement(population,1,1)==-4), "Test 2"
-
-    population[0, 1] = 1.
-    assert(calculate_agreement(population,1,1)==-2), "Test 3"
-
-    population[1, 0] = 1.
-    assert(calculate_agreement(population,1,1)==0), "Test 4"
-
-    population[2, 1] = 1.
-    assert(calculate_agreement(population,1,1)==2), "Test 5"
-
-    population[1, 2] = 1.
-    assert(calculate_agreement(population,1,1)==4), "Test 6"
-
-    "Testing external pull"
-    population = -np.ones((3, 3))
-    assert(calculate_agreement(population,1,1,1)==3), "Test 7"
-    assert(calculate_agreement(population,1,1,-1)==5), "Test 8"
-    assert(calculate_agreement(population,1,1,10)==14), "Test 9"
-    assert(calculate_agreement(population,1,1,-10)==-6), "Test 10"
-
-    print("Tests passed")
+            rand_neighbour = rand_person + 1
+    return rand_person, rand_neighbour
 
 
-def ising_main(population, alpha=None, external=0.0):
+def opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter):
+    # calculates opinion difference
+    opinion_diff = abs(grid[rand_person] - grid[rand_neighbour])
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.set_axis_off()
-    im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
+    if opinion_diff < threshold:
+        new_op_person = round(grid[rand_person] + coupling_parameter * (grid[rand_neighbour] - grid[rand_person]),8)
+        new_op_neighbour = round(grid[rand_neighbour] + coupling_parameter * (grid[rand_person] - grid[rand_neighbour]),8)
+        grid[rand_person], grid[rand_neighbour] = new_op_person, new_op_neighbour
+    return grid
 
-    # Iterating an update 100 times
-    for frame in range(100):
-        # Iterating single steps 1000 times to form an update
-        for step in range(1000):
-            ising_step(population, external)
-        print('Step:', frame, end='\r')
-        plot_ising(im, population)
-
-
-'''
-==============================================================================================================
-This section contains code for the Defuant Model - task 2 in the assignment
-==============================================================================================================
-'''
 
 def defuant_main(threshold, coupling_parameter, timesteps=100):
     # Creates grid of 100 people
-    grid = np.random.rand(1,100)[0]
+    grid = np.random.rand(1, 100)[0]
 
     for i in range(timesteps):
-        # sets the index of the person being examined
-        rand_person = random.randint(0, 100)
-        # determines whether the neighbour will the right or the left
-        decide_rand_neighbour = random.randint(1, 2)
+        # grid_size represents the number of villagers:
+        rand_person, rand_neighbour = random_person_and_neighbour(grid_size=100)
 
-        # sets the index of the neighbour
-        if rand_person == 0:
-            rand_neighbour = rand_person + 1
-        elif rand_person == 100:
-            rand_neighbour = rand_person - 1
-        else:
-            if decide_rand_neighbour == 1:
-                rand_neighbour = rand_person - 1
-            else:
-                rand_neighbour = rand_person + 1
+        grid = opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter)
 
-        # calculates opinion difference
-        opinion_diff = abs(grid[rand_person] - grid[rand_neighbour])
+        # time_list = []
+        # for tx in range(1,101):
+        #     time_list.append(i)
 
-        if opinion_diff < threshold:
-            new_op_person = grid[rand_person] + coupling_parameter * (grid[rand_neighbour] - grid[rand_person])
-            new_op_neighbour = grid[rand_neighbour] + coupling_parameter * (grid[rand_person] - grid[rand_neighbour])
-            grid[rand_person], grid[rand_neighbour] = new_op_person, new_op_neighbour
-
-		# fig, axs = plt.subplots(2)
-		plt.subplot(2, 1, 1)
-		plt.hist(grid, bins=range(0, 1.1, 0.1), edgecolor='black')
-		# plt.title('Distribution of Student Marks')
-		plt.xlabel('No. of people')
-		plt.ylabel('Opinion rating')
-		plt.xticks(range(0, 1, 0.2))
-		plt.grid(axis='y', alpha=0.75)
-		plt.title(f'Beta:{beta}, T:{threshold}, t:{i}')
-		plt.ylabel('Damped oscillation')
-
-		# must rework this whole plotting thing
-		plt.subplot(2, 1, 2)
-		plt.scatter(i, grid, 'r.-')
-		plt.xlabel('time (s)')
-		plt.ylabel('Undamped')
+    #     time_array = np.full((1, 100), (i+1), dtype=int)[0]
+    #     t_list = time_array.tolist()
+        grid_for_plot = grid.tolist()
+    #     print(grid_for_plot)
+    #     # # plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i}')
+    #     # # plt.ylabel('Damped oscillation')
+    #
+    #     # must rework this whole plotting thing
+    #     plt.subplot(1, 2, 2)
+    #     # for xe, ye in zip(time_list, grid):
+    #     #     plt.scatter([xe] * 100, ye, 'r.-')
+    #     #
+    #     plt.scatter(t_list, grid_for_plot, 'r.-')
+    #
+    #     # plt.xlabel('time (s)')
+    #     # plt.ylabel('Undamped')
+    #
+    #fig, axs = plt.subplots(2)
+    plt.subplot(1, 2, 1)
+    plt.hist(grid_for_plot, bins=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], edgecolor='black')
+    plt.xlabel('No. of people')
+    plt.ylabel('Opinion rating')
+    plt.xticks([0.2, 0.4, 0.6, 0.8, 0.9, 1.0])
+    #plt.grid(axis='y', alpha=0.75)
+    plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i+1}')
+    plt.show()
 
 
 def test_defuant():
-    #Your code for task 2 goes here
+    # Your code for task 2 goes here
+    print("Testing defuant model calculations...")
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.5, 0.5
+    assert (opinion_defuant(grid, 3, 4, threshold, coupling_parameter) == [0.5, 0.2, 0.8, 0.25, 0.25, 0.6, 0.7, 0.9, 1,
+                                                                           0.3]), "Test 1"
+
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.2, 0.4
+    assert (opinion_defuant(grid, 3, 4, threshold, coupling_parameter) == [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1,
+                                                                           0.3]), "Test 2"
+
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.2, 0.4
+
+    assert (opinion_defuant(grid, 7, 8, threshold, coupling_parameter) == [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.94,
+                                                                           0.96, 0.3]), "Test 3"
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.2, 0.8
+    assert (opinion_defuant(grid, 7, 8, threshold, coupling_parameter) == [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.98,
+                                                                           0.92, 0.3]), "Test 4"
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.7, 0.6
+    assert (opinion_defuant(grid, 1, 2, threshold, coupling_parameter) == [0.5, 0.56, 0.44, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]), "Test 5"
+
+    grid = [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]
+    threshold, coupling_parameter = 0.6, 0.6
+    assert (opinion_defuant(grid, 2, 1, threshold, coupling_parameter) == [0.5, 0.2, 0.8, 0.4, 0.1, 0.6, 0.7, 0.9, 1, 0.3]), "Test 6"
+
+    print("Tests passed")
 
 
 '''
@@ -288,23 +345,23 @@ This section contains code for the main function- you should write some code for
 ==============================================================================================================
 '''
 
-def main():
-    #You should write some code for handling flags here
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-test_defuant", action='store_true', default=False,
-                        help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
-    parser.add_argument("-defuant", action='store_true', default=False,
-                        help="-defuant runs the defuant model")
-    parser.add_argument("-beta", default=0.5,
-                        help="-beta sets the value of the coupling parameter for the defuant model")
-    parser.add_argument("-threshold", default=0.5,
-                        help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
-    args = parser.parse_args()
-
-    if args.test_defuant == True:
-        test_defuant()
-    if args.defuant == True:
-        defuant_main(arg.defuant)
-
-#if __name__=="__main__":
-#	main()
+# def main():
+#     #You should write some code for handling flags here
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("-test_defuant", action='store_true', default=False,
+#                         help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
+#     parser.add_argument("-defuant", action='store_true', default=False,
+#                         help="-defuant runs the defuant model")
+#     parser.add_argument("-beta", default=0.5,
+#                         help="-beta sets the value of the coupling parameter for the defuant model")
+#     parser.add_argument("-threshold", default=0.5,
+#                         help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
+#     args = parser.parse_args()
+#
+#     if args.test_defuant == True:
+#         test_defuant()
+#     if args.defuant == True:
+#         defuant_main(arg.defuant)
+#
+# #if __name__=="__main__":
+# #	main()
