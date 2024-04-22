@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 import argparse
 class Node:
@@ -35,19 +34,19 @@ class Network:
         else:
             self.nodes = nodes 
 
-    def get_mean_degree(self):
+    def get_mean_degree(self): #question 1 for task 3, uses get neighbours function and computes average for each node
         total=0
         for i in range(len(self.nodes)):
             total+=len(self.nodes[i].get_neighbours())
-        return total/len(self.nodes)
+        return total/len(self.nodes) #mean part
 
 
-    def get_mean_path_length(self):
+    def get_mean_path_length(self): #question 2 for task 3, uses breadth-first search to find the mean path from one node to all others
         total=0
-        for i in range(len(self.nodes)):
+        for i in range(len(self.nodes)): #for every node
             total1=0
             for elem in self.nodes:
-                if elem!=self.nodes[i]:
+                if elem!=self.nodes[i]: #for every different node than the one looped through
                     start_node = self.nodes[i]
                     goal = elem
                     search_queue = Queue()
@@ -57,7 +56,7 @@ class Network:
                     while not search_queue.is_empty():
                         node_to_check = search_queue.pop(0)
                 
-                        if node_to_check == goal:
+                        if node_to_check == goal: #when we end up on the destination
                             break
 
                         for neighbour_index in node_to_check.get_neighbours():
@@ -87,7 +86,7 @@ class Network:
                     # print(route)
                     total2=len(route)-1
                         #Reverse and print the route
-                    total1+=total2
+                    total1+=total2 # sums to compute the average
             total1/=(len(self.nodes)-1)
             total+=total1
         total/=len(self.nodes)
@@ -96,12 +95,12 @@ class Network:
             
 
 
-    def get_clustering(self):
+    def get_clustering(self): #question 3 for task 3, clustering coefficient
         count=0
         for i in range(len(self.nodes)):
             minilist=self.nodes[i].get_neighbours()
             n=len(minilist) #number of neighbours
-            possible_connection=n*(n-1)/2
+            possible_connection=n*(n-1)/2 #formula
             Biglist=[]
             for j in range(len(minilist)):
                 Biglist.append(self.nodes[minilist[j]].get_neighbours())
@@ -135,13 +134,13 @@ class Network:
                     self.nodes[neighbour_index].connections[index] = 1
         return self
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-network", type=int, default=10, help="size of network")
-    parser.add_argument("-test_networks",action='store_true', default=False)
+def main(): #main function
+    parser = argparse.ArgumentParser() #use argparse
+    parser.add_argument("-network", type=int, default=10, help="size of network") #network size argument, integer value, by default 10 
+    parser.add_argument("-test_networks",action='store_true', default=False) #tests if code functions well, if nothing is inputted then will not test
     args = parser.parse_args()
     network=Network()
-    network=network.make_random_network(args.network)
+    network=network.make_random_network(args.network) #uses size argument
     print('Mean degree=',network.get_mean_degree())
     print('Mean path length=',network.get_mean_path_length())
     print('Mean cluster coefficient=', network.get_clustering())
