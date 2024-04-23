@@ -21,6 +21,7 @@ class Network:
 
     def make_ring_network(self, N, neighbour_range=1):
         nodes = []
+        edges = []
         num_nodes = N
         for node_number in range(num_nodes):
             connections = [0 for _ in range(num_nodes)]
@@ -28,80 +29,49 @@ class Network:
                 connections[(node_number-distance)%num_nodes] = 1
                 connections[(node_number+distance)%num_nodes] = 1
             new_node = Node(np.random.random(), node_number, connections=connections)
+            edges.append(connections)
             nodes.append(new_node)
 
-        return nodes
-        
-
+        return edges, nodes
+    
     def make_small_world_network(self, N, re_wire_prob=0.2):
-        starting_network = Network
-        nodes = starting_network.make_ring_network(self, N, 2)
+        edges, nodes = self.make_ring_network(N, neighbour_range=2)
+        network = Network(nodes)
+        network.plot()
 
-        connections_before = 0
-        rewires = 0
+        #connection counting script
+        #connections_before = 0
+        #rewires = 0
+        #for node in nodes:
+            #print(node.connections)
+            #for i, connection in enumerate(node.connections):
+                #if connection == 1:
+                    #connections_before += 1
 
         for node_no, node in enumerate(nodes):
-            print(node.connections)
-            for old_node, connection in enumerate(node.connections):
-                if connection == 1:
-                    connections_before += 1
-                    new_connections = [0 for _ in range(N)]
-                    random_value = np.random.random()
-                    if re_wire_prob > random_value:
-                        rewires += 1
-                        random_connection = np.random.randint(0, N)
-                        new_connections[random_connection] = 1
-                        node.connections = new_connections
+            connected = [edge_no for edge_no, edge in enumerate(node.connections)
+                         if edge_no != node_no and edge == 1]
+            for edge in connected:
+                not_connected = [edge_no for edge_no, edge in enumerate(node.connections) 
+                                 if edge_no != node_no and edge == 0]
+                if np.random.random() < re_wire_prob:
+                    node.connections[edge] = 0
+                    node.connections[np.random.choice(not_connected)] = 1
+                    #rewires += 1
 
-                        #if nodes[random_node].connections
+        #connection counting script
+        #connections_after = 0
+        #for node in nodes:
+            #print(node.connections)
+            #for i, connection in enumerate(node.connections):
+                #if connection == 1:
+                    #connections_after += 1
 
-        connections_after = 0
-
-        print()
-
-        for node in nodes:
-            print(node.connections)
-            for i, connection in enumerate(node.connections):
-                if connection == 1:
-                    connections_after += 1
-
-        print(f"before: {connections_before}")
-        print(f"rewires: {rewires}")
-        print(f"after: {connections_after}")
+        #print(f"Connections before: {connections_before}")
+        #print(f"Number of rewires performed: {rewires}")
+        #print(f"Connections after: {connections_after}")
 
         return nodes
-
-        """
-        #this is purely a random network
-        for node in nodes:
-            new_connections = [0 for _ in range(N)]
-            for i, connection in enumerate(new_connections):
-                random_value = np.random.random()
-                if random_value < re_wire_prob:
-                    new_connections[i] = 1
-            node.connections = new_connections
-            print(node.connections)
-        
-        return nodes
-        """
-
-        """
-        #this doesnt work as intended
-        for node_number, node in enumerate(nodes):
-            for connection_number, connection in enumerate(node.connections):
-                random_value = np.random.random()
-                if re_wire_prob > random_value:
-                    print("rewiring")
-                    new_connection = (connection + 1) % 2
-                    connections[connection_number] = new_connection
-                    nodes[node_number] = Node(node.value, node.index, connections)
-                else:
-                    continue
-
-        print(f"Connections: {connections}")
-        
-        return connections, nodes
-        """
 
     def plot(self):
 
