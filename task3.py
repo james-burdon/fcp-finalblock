@@ -97,20 +97,25 @@ class Network:
 
     def get_clustering(self): #question 3 for task 3, clustering coefficient
         count=0
-        for i in range(len(self.nodes)):
-            minilist=self.nodes[i].get_neighbours()
+        print(self.nodes)
+        for i in range(len(self.nodes)): #for all nodes
+            minilist=self.nodes[i].get_neighbours() #neighbours of node chosen
             n=len(minilist) #number of neighbours
             possible_connection=n*(n-1)/2 #formula
-            Biglist=[]
-            for j in range(len(minilist)):
-                Biglist.append(self.nodes[minilist[j]].get_neighbours())
-            result = set(Biglist[0])
-            for s in Biglist[1:]:
-                result.intersection_update(s)
-            result.remove(i)
-            # print(Biglist,result,'result')
-            count+=len(result)
-        return count/len(self.nodes)
+            #print('possible connection=',possible_connection)
+            if possible_connection!=0: #cannot divide by 0 at the end
+                count1=0#count of edges between neighbours
+                Biglist=[]
+                edges=[] #list to check for same edges such as 1-0 and 0-1
+                for j in range(len(minilist)):
+                    Biglist.append((minilist[j],self.nodes[minilist[j]].get_neighbours())) #neighbours of these nodes
+                for m in range(len(Biglist)):
+                    for n in range(len(Biglist[m][1])):
+                        if Biglist[m][1][n] in minilist and  {Biglist[m][1][n],Biglist[m][0]} not in edges: #use of sets for this
+                            count1+=1
+                            edges+=[{Biglist[m][1][n],Biglist[m][0]}]
+                count+=count1/possible_connection
+        return int(count/len(self.nodes))
 
             
 
@@ -167,6 +172,37 @@ def test_networks():
     assert(network.get_clustering()==0), network.get_clustering()
     assert(network.get_mean_path_length()==2.777777777777778), network.get_mean_path_length()
     print('Tests passed')
+
+    nodes = []
+    num_nodes = 10
+    for node_number in range(num_nodes):
+        connections = [0 for val in range(num_nodes)]
+        connections[(node_number+1)%num_nodes] = 1
+        new_node = Node(0, node_number, connections=connections)
+        nodes.append(new_node)
+    network = Network(nodes)
+
+    print("Testing one-sided network")
+    assert(network.get_mean_degree()==1), network.get_mean_degree()
+    assert(network.get_clustering()==0),  network.get_clustering()
+    assert(network.get_mean_path_length()==5), network.get_mean_path_length()
+
+    nodes = []
+    num_nodes = 10
+    for node_number in range(num_nodes):
+        connections = [1 for val in range(num_nodes)]
+        connections[node_number] = 0
+        new_node = Node(0, node_number, connections=connections)
+        nodes.append(new_node)
+    network = Network(nodes)
+
+    print("Testing fully connected network")
+    assert(network.get_mean_degree()==num_nodes-1), network.get_mean_degree()
+    assert(network.get_clustering()==1),  network.get_clustering()
+    assert(network.get_mean_path_length()==1), network.get_mean_path_length()
+
+    print("All tests passed")
+
 
 if __name__ == '__main__':
     main()
