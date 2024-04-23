@@ -22,13 +22,13 @@ class Network:
             self.nodes = nodes
 
     def get_mean_degree(self):
-        #Your code  for task 3 goes here
+        # Your code  for task 3 goes here
 
     def get_mean_clustering(self):
-        #Your code for task 3 goes here
+        # Your code for task 3 goes here
 
     def get_mean_path_length(self):
-        #Your code for task 3 goes here
+        # Your code for task 3 goes here
 
     def make_random_network(self, N, connection_probability=0.5):
         '''
@@ -49,10 +49,10 @@ class Network:
                     self.nodes[neighbour_index].connections[index] = 1
 
     def make_ring_network(self, N, neighbour_range=1):
-        #Your code  for task 4 goes here
+        # Your code  for task 4 goes here
 
     def make_small_world_network(self, N, re_wire_prob=0.2):
-        #Your code for task 4 goes here
+        # Your code for task 4 goes here
 
     def plot(self):
 
