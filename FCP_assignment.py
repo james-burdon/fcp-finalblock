@@ -268,44 +268,36 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     # Creates grid of 100 people
     grid = np.random.rand(1, 100)[0]
 
+    plt.subplot(1, 2, 2)
+
     for i in range(timesteps):
         # grid_size represents the number of villagers:
         rand_person, rand_neighbour = random_person_and_neighbour(grid_size=100)
 
         grid = opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter)
 
-        # time_list = []
-        # for tx in range(1,101):
-        #     time_list.append(i)
-
-    #     time_array = np.full((1, 100), (i+1), dtype=int)[0]
-    #     t_list = time_array.tolist()
+        time_array = np.full((1, 100), (i+1), dtype=int)[0]
+        t_list = time_array.tolist()
         grid_for_plot = grid.tolist()
-    #     print(grid_for_plot)
-    #     # # plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i}')
-    #     # # plt.ylabel('Damped oscillation')
-    #
-    #     # must rework this whole plotting thing
-    #     plt.subplot(1, 2, 2)
-    #     # for xe, ye in zip(time_list, grid):
-    #     #     plt.scatter([xe] * 100, ye, 'r.-')
-    #     #
-    #     plt.scatter(t_list, grid_for_plot, 'r.-')
-    #
-    #     # plt.xlabel('time (s)')
-    #     # plt.ylabel('Undamped')
-    #
-    #fig, axs = plt.subplots(2)
+        plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i+1}')
+
+        plt.scatter(time_array, grid, 3, c='r')
+
+        plt.xlabel('No. of Interactions')
+        plt.ylabel('Opinions')
+
+
     plt.subplot(1, 2, 1)
-    plt.hist(grid_for_plot, bins=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], edgecolor='black')
+    plt.hist(grid, bins=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], edgecolor='black')
     plt.xlabel('No. of people')
     plt.ylabel('Opinion rating')
     plt.xticks([0.2, 0.4, 0.6, 0.8, 0.9, 1.0])
     #plt.grid(axis='y', alpha=0.75)
     plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i+1}')
+    plt.tight_layout()
     plt.show()
 
-
+defuant_main(0.9,0.9)
 def test_defuant():
     # Your code for task 2 goes here
     print("Testing defuant model calculations...")
