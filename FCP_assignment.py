@@ -227,12 +227,12 @@ import random
 #         print('Step:', frame, end='\r')
 #         plot_ising(im, population)
 #
-#
-# '''
-# ==============================================================================================================
-# This section contains code for the Defuant Model - task 2 in the assignment
-# ==============================================================================================================
-# '''
+
+'''
+==============================================================================================================
+This section contains code for the Defuant Model - task 2 in the assignment
+==============================================================================================================
+'''
 
 def random_person_and_neighbour(grid_size=100):
     # sets the index of the person being examined
