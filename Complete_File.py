@@ -403,11 +403,11 @@ def main():
     #You should write some code for handling flags here
     arg_setup()
 
-    if args.test_defuant == True:
+    if args.test_defuant:
         test_defuant()
-    if args.defuant == True:
+    if args.defuant:
         defuant_main(args.threshold,args.beta)
-    if args.ising == True:
+    if args.ising:
         ising_main(ising_setup(), args.alpha, args.external)
     # test_ising()
     #
