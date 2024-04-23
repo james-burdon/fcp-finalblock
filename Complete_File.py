@@ -290,16 +290,12 @@ def random_person_and_neighbour(grid_size=100):
     # determines whether the neighbour will the right or the left
     decide_rand_neighbour = random.randint(1, 2)
 
-    # sets the index of the neighbour
-    if rand_person == 0:
-        rand_neighbour = rand_person + 1
-    elif rand_person == (grid_size - 1):
-        rand_neighbour = rand_person - 1
+    # sets the index of the neighbour using circular boundaries
+
+    if decide_rand_neighbour == 1:
+        rand_neighbour = (rand_person - 1) % grid_size
     else:
-        if decide_rand_neighbour == 1:
-            rand_neighbour = rand_person - 1
-        else:
-            rand_neighbour = rand_person + 1
+        rand_neighbour = (rand_person + 1) % grid_size
     return rand_person, rand_neighbour
 
 
