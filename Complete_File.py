@@ -341,7 +341,7 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.ylabel('Opinion rating')
     plt.xticks([0.2, 0.4, 0.6, 0.8, 0.9, 1.0])
     #plt.grid(axis='y', alpha=0.75)
-    plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i+1}')
+    plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{timesteps}')
     plt.tight_layout()
     plt.show()
 
@@ -388,6 +388,11 @@ This section contains code for the main function- you should write some code for
 '''
 def arg_setup():
     parser = argparse.ArgumentParser()
+    # ising model
+    parser.add_argument("-ising_model", action='store_true', default=False,
+                        help="-ising_model runs the ising model")
+    parser.add_argument("-external", help="-external sets the value of 'h' for the ising model")
+    # defuant model
     parser.add_argument("-test_defuant", action='store_true', default=False,
                         help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
     parser.add_argument("-defuant", action='store_true', default=False,
@@ -401,7 +406,7 @@ def arg_setup():
     if args.test_defuant == True:
         test_defuant()
     if args.defuant == True:
-        defuant_main(arg.defuant)
+        defuant_main(args.threshold,args.beta)
 
 
 
