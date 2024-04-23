@@ -160,16 +160,11 @@ def calculate_agreement(population, row, col, external=0.0):
     #add disagreement at the end
     h = external * self_value
 
-    ################################################################################################
-    if !args.h:
-        h = 0
-    ################################################################################################
-
     agreement += h
 
     return agreement
 
-def ising_step(population, external=0.0):
+def ising_step(population, alpha, external=0.0):
     '''
     This function will perform a single update of the Ising model
     Inputs: population (numpy array)
@@ -387,7 +382,8 @@ def arg_setup():
     # ising model
     parser.add_argument("-ising_model", action='store_true', default=False,
                         help="-ising_model runs the ising model")
-    parser.add_argument("-external", help="-external sets the value of 'h' for the ising model")
+    parser.add_argument("-external", default=0, help="-external sets the value of 'h' for the ising model")
+    parser.add_argument("-alpha", help="-alpha sets the value of how tolerant a society is of those who disagree with their neighbours for the ising model")
     # defuant model
     parser.add_argument("-test_defuant", action='store_true', default=False,
                         help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
@@ -399,16 +395,19 @@ def arg_setup():
                         help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
     args = parser.parse_args()
 
-    if args.test_defuant == True:
-        test_defuant()
-    if args.defuant == True:
-        defuant_main(args.threshold,args.beta)
 
 
 
 def main():
     #You should write some code for handling flags here
     arg_setup()
+
+    if args.test_defuant == True:
+        test_defuant()
+    if args.defuant == True:
+        defuant_main(args.threshold,args.beta)
+    if args.ising == True:
+        ising_main(ising_setup(), args.alpha, args.external)
     # test_ising()
     #
     # population = ising_setup()
@@ -416,7 +415,7 @@ def main():
     # alpha = 10
     # external = 0.0
     #
-    # ising_main(population, alpha, external)
+    # ising_main(population, args.alpha, args.external)
 
 
 if __name__=="__main__":
