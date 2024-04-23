@@ -12,14 +12,14 @@ class Node:
         self.connections = connections
         self.value = value
 
-class Network: 
+class Network:
 
     def __init__(self, nodes=None):
 
         if nodes is None:
             self.nodes = []
         else:
-            self.nodes = nodes 
+            self.nodes = nodes
 
     def get_mean_degree(self):
         #Your code  for task 3 goes here
@@ -312,17 +312,18 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.subplot(1, 2, 2)
 
     for i in range(timesteps):
-        # grid_size represents the number of villagers:
-        rand_person, rand_neighbour = random_person_and_neighbour(grid_size=100)
+        for j in range(len(grid)):
+            # grid_size represents the number of villagers:
+            rand_person, rand_neighbour = random_person_and_neighbour(grid_size=100)
 
-        # updates grid with new opinions
-        grid = opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter)
+            # updates grid with new opinions
+            grid = opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter)
         # creates list of times to use for scatter plot creation
         time_array = np.full((1, 100), (i+1), dtype=int)[0]
         # graph plotting for the scatter varying with time/interactions
         plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i+1}')
-        plt.scatter(time_array, grid, 3, c='r')
-        plt.xlabel('No. of Interactions')
+        plt.scatter(time_array, grid, 15, c='r')
+        plt.xlabel('No. of Iterations')
         plt.ylabel('Opinions')
 
     # graph plotting for the histogram of opinions
@@ -330,7 +331,7 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.hist(grid, bins=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], edgecolor='black')
     plt.xlabel('No. of people')
     plt.ylabel('Opinion rating')
-    plt.xticks([0.2, 0.4, 0.6, 0.8, 0.9, 1.0])
+    plt.xticks([0.2, 0.4, 0.6, 0.8, 1.0])
     #plt.grid(axis='y', alpha=0.75)
     plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{timesteps}')
     plt.tight_layout()
