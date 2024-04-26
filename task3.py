@@ -95,7 +95,7 @@ class Network:
             
 
 
-    def get_clustering(self): #question 3 for task 3, clustering coefficient
+    def get_mean_clustering(self): #question 3 for task 3, clustering coefficient
         count=0
         print(self.nodes)
         for i in range(len(self.nodes)): #for all nodes
@@ -106,16 +106,16 @@ class Network:
             if possible_connection!=0: #cannot divide by 0 at the end
                 count1=0#count of edges between neighbours
                 Biglist=[]
-                edges=[] #list to check for same edges such as 1-0 and 0-1
+                edges=[] #list to check for same edges such as 1-0 and 0-1 through the use of sets
                 for j in range(len(minilist)):
                     Biglist.append((minilist[j],self.nodes[minilist[j]].get_neighbours())) #neighbours of these nodes
                 for m in range(len(Biglist)):
                     for n in range(len(Biglist[m][1])):
                         if Biglist[m][1][n] in minilist and  {Biglist[m][1][n],Biglist[m][0]} not in edges: #use of sets for this
                             count1+=1
-                            edges+=[{Biglist[m][1][n],Biglist[m][0]}]
+                            edges+=[{Biglist[m][1][n],Biglist[m][0]}] #adds set to list adds node and its neighbour if they're neighbours
                 count+=count1/possible_connection
-        return int(count/len(self.nodes))
+        return int(count/len(self.nodes)) #return int to pass test and avoid '0.0'
 
             
 
@@ -148,7 +148,7 @@ def main(): #main function
     network=network.make_random_network(args.network) #uses size argument
     print('Mean degree=',network.get_mean_degree())
     print('Mean path length=',network.get_mean_path_length())
-    print('Mean cluster coefficient=', network.get_clustering())
+    print('Mean cluster coefficient=', network.get_mean_clustering())
     if args.test_networks==True:
         test_networks()
 
@@ -169,7 +169,7 @@ def test_networks():
 
     print("Testing ring network")
     assert(network.get_mean_degree()==2), network.get_mean_degree()
-    assert(network.get_clustering()==0), network.get_clustering()
+    assert(network.get_mean_clustering()==0), network.get_mean_clustering()
     assert(network.get_mean_path_length()==2.777777777777778), network.get_mean_path_length()
     print('Tests passed')
 
@@ -184,7 +184,7 @@ def test_networks():
 
     print("Testing one-sided network")
     assert(network.get_mean_degree()==1), network.get_mean_degree()
-    assert(network.get_clustering()==0),  network.get_clustering()
+    assert(network.get_mean_clustering()==0),  network.get_mean_clustering()
     assert(network.get_mean_path_length()==5), network.get_mean_path_length()
 
     nodes = []
@@ -198,7 +198,7 @@ def test_networks():
 
     print("Testing fully connected network")
     assert(network.get_mean_degree()==num_nodes-1), network.get_mean_degree()
-    assert(network.get_clustering()==1),  network.get_clustering()
+    assert(network.get_mean_clustering()==1),  network.get_mean_clustering()
     assert(network.get_mean_path_length()==1), network.get_mean_path_length()
 
     print("All tests passed")
