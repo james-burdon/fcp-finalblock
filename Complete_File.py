@@ -288,7 +288,7 @@ This section contains code for the Ising Model - task 1 in the assignment
 '''
 
 
-def calculate_agreement(population, row, col, external=0.0):
+def calculate_agreement(population, row, col, external):
     '''
     This function should return the *change* in agreement that would result if the cell at (row, col) was to flip it's value
     Inputs: population (numpy array)
@@ -318,7 +318,7 @@ def calculate_agreement(population, row, col, external=0.0):
     return agreement
 
 
-def ising_step(population, alpha, external=0.0):
+def ising_step(population, alpha, external):
     '''
     This function will perform a single update of the Ising model
     Inputs: population (numpy array)
@@ -335,11 +335,11 @@ def ising_step(population, alpha, external=0.0):
         population[row, col] *= -1
     else:
         # find probability of flipping
-        probability = np.exp([-agreement / alpha])
-        random_value = np.random.random()
-        if random_value < probability:
-            population[row, col] *= -1
-
+        if alpha != 0:
+            probability = np.exp([-agreement / alpha])
+            random_value = np.random.random()
+            if random_value < probability:
+                population[row, col] *= -1
 
 def plot_ising(im, population):
     """Create a plot of the Ising model
@@ -387,20 +387,20 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha=None, external=0.0):
+def ising_main(population, alpha, external):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
+    ax.set_title(f"External: {format(external,".3f")}, Alpha: {format(alpha,".3f")}")
 
     # Iterating an update 100 times
     for frame in range(100):
         # Iterating single steps 1000 times to form an update
         for step in range(1000):
-            ising_step(population, external)
+            ising_step(population, alpha, external)
         print('Step:', frame, end='\r')
         plot_ising(im, population)
-
 
 def find_neighbour_values(population, row, col):
     n_rows = len(population)
@@ -411,7 +411,6 @@ def find_neighbour_values(population, row, col):
                   population[(row + 1) % n_rows, col]]  # down
 
     return neighbours
-
 
 def ising_setup():
     """Sets up the starting grid for the Ising Model. Each cell has a 50/50 chance to be 1 or -1
@@ -550,8 +549,8 @@ def arg_setup():
                         help="-test_ising takes boolean values only; when true, the test code will run")
     parser.add_argument("-ising_model", action='store_true', default=False,
                         help="-ising_model runs the ising model")
-    parser.add_argument("-external", default=0, help="-external sets the value of 'h' for the ising model")
-    parser.add_argument("-alpha",
+    parser.add_argument("-external", default=0.0, help="-external sets the value of 'h' for the ising model", type=float)
+    parser.add_argument("-alpha", type=float, default=0.01,
                         help="-alpha sets the value of how tolerant a society is of those who disagree with their neighbours for the ising model")
 
     # networks
