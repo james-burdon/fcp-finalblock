@@ -103,7 +103,7 @@ class Network:
 
     def get_mean_clustering(self):  # question 3 for task 3, clustering coefficient
         count = 0
-        print(self.nodes)
+
         for i in range(len(self.nodes)):  # for all nodes
             minilist = self.nodes[i].get_neighbours()  # neighbours of node chosen
             n = len(minilist)  # number of neighbours
@@ -241,7 +241,7 @@ def test_networks():
     print("Testing ring network")
     assert (network.get_mean_degree() == 2), network.get_mean_degree()
     assert (network.get_mean_clustering() == 0), network.get_mean_clustering()
-    assert (network.get_path_length() == 2.777777777777778), network.get_path_length()
+    assert (network.get_mean_path_length() == 2.777777777777778), network.get_mean_path_length()
 
     nodes = []
     num_nodes = 10
@@ -255,7 +255,7 @@ def test_networks():
     print("Testing one-sided network")
     assert (network.get_mean_degree() == 1), network.get_mean_degree()
     assert (network.get_mean_clustering() == 0), network.get_mean_clustering()
-    assert (network.get_path_length() == 5), network.get_path_length()
+    assert (network.get_mean_path_length() == 5), network.get_mean_path_length()
 
     nodes = []
     num_nodes = 10
@@ -269,7 +269,7 @@ def test_networks():
     print("Testing fully connected network")
     assert (network.get_mean_degree() == num_nodes - 1), network.get_mean_degree()
     assert (network.get_mean_clustering() == 1), network.get_mean_clustering()
-    assert (network.get_path_length() == 1), network.get_path_length()
+    assert (network.get_mean_path_length() == 1), network.get_mean_path_length()
 
     print("All tests passed")
 
@@ -565,9 +565,9 @@ def arg_setup():
                         help="-test_defuant takes boolean values only; when true, the test code will run")
     parser.add_argument("-defuant", action='store_true', default=False,
                         help="-defuant runs the defuant model")
-    parser.add_argument("-beta", default=0.5,
+    parser.add_argument("-beta", type=float, default=0.5,
                         help="-beta sets the value of the coupling parameter for the defuant model")
-    parser.add_argument("-threshold", default=0.5,
+    parser.add_argument("-threshold", type=float, default=0.5,
                         help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
     args = parser.parse_args()
 
@@ -596,9 +596,9 @@ def main():
     if args.network:  # runs networks modelling stuff if flag detected
         network = Network().make_random_network(args.network)  # uses size argument
         # prints the required outputs
-        print('Mean degree=', network.get_mean_degree())
-        print('Mean path length=', network.get_mean_path_length())
-        print('Mean cluster coefficient=', network.get_mean_clustering())
+        print('Mean degree:', network.get_mean_degree())
+        print('Average path length:', network.get_mean_path_length())
+        print('Clustering co-efficient:', network.get_mean_clustering())
 
 
 if __name__ == "__main__":
