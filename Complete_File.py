@@ -556,7 +556,7 @@ def arg_setup():
 
     # networks
     parser.add_argument("-network", type=int,
-                        help="size of network")  # network size argument, integer value, by default 10
+                        help="size of network")  # network size argument, integer value
     parser.add_argument("-test_networks", action='store_true',
                         default=False,
                         help="-test_networks runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
@@ -571,6 +571,10 @@ def arg_setup():
     parser.add_argument("-threshold", type=float, default=0.5,
                         help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
     args = parser.parse_args()
+
+    # ring_network stuff
+    parser.add_argument("-ring_network", type=int,
+                        help="-ring_network determines no. of nodes in network")  # network size argument, integer value, by default 10
 
     return args
 
