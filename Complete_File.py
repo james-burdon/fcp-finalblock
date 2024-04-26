@@ -577,7 +577,7 @@ def arg_setup():
 
 def main():
     # You should write some code for handling flags here
-    arg_setup()
+    args = arg_setup()
 
     if args.test_defuant:  # tests for defuant model if flag detected
         test_defuant()
@@ -588,7 +588,7 @@ def main():
     if args.test_ising:  # tests for ising model if flag detected
         test_ising()
 
-    if args.ising:  # runs ising model if flag detected
+    if args.ising_model:  # runs ising model if flag detected
         ising_main(ising_setup(), args.alpha, args.external)
 
     if args.test_networks:  # tests for networks modelling stuff if flag detected
