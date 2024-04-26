@@ -543,7 +543,7 @@ This section contains code for the main function- you should write some code for
 
 
 def arg_setup():
-    parser = argparse.ArgumentParser() # use argparse
+    parser = argparse.ArgumentParser()  # use argparse
 
     # ising model
     parser.add_argument("-test_ising", action='store_true', default=False,
@@ -558,7 +558,8 @@ def arg_setup():
     parser.add_argument("-network", type=int,
                         help="size of network")  # network size argument, integer value, by default 10
     parser.add_argument("-test_networks", action='store_true',
-                        default=False, help="-test_networks runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
+                        default=False,
+                        help="-test_networks runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
 
     # defuant model
     parser.add_argument("-test_defuant", action='store_true', default=False,
@@ -578,23 +579,24 @@ def main():
     # You should write some code for handling flags here
     arg_setup()
 
-    if args.test_defuant:
+    if args.test_defuant:  # tests for defuant model if flag detected
         test_defuant()
 
-    if args.defuant:
+    if args.defuant:  # runs defuant model if flag detected
         defuant_main(args.threshold, args.beta)
 
-    if args.test_ising:
+    if args.test_ising:  # tests for ising model if flag detected
         test_ising()
 
-    if args.ising:
+    if args.ising:  # runs ising model if flag detected
         ising_main(ising_setup(), args.alpha, args.external)
 
-    if args.test_networks:
+    if args.test_networks:  # tests for networks modelling stuff if flag detected
         test_networks()
 
-    if args.network:
+    if args.network:  # runs networks modelling stuff if flag detected
         network = Network().make_random_network(args.network)  # uses size argument
+        # prints the required outputs
         print('Mean degree=', network.get_mean_degree())
         print('Mean path length=', network.get_mean_path_length())
         print('Mean cluster coefficient=', network.get_mean_clustering())
