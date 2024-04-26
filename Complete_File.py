@@ -489,8 +489,8 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     # graph plotting for the histogram of opinions
     plt.subplot(1, 2, 1)
     plt.hist(grid, bins=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], edgecolor='black')
-    plt.xlabel('No. of people')
-    plt.ylabel('Opinion rating')
+    plt.ylabel('No. of people')
+    plt.xlabel('Opinion rating')
     plt.xticks([0.2, 0.4, 0.6, 0.8, 1.0])
     # plt.grid(axis='y', alpha=0.75)
     plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{timesteps}')
