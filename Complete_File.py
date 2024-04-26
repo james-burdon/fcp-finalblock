@@ -543,16 +543,26 @@ This section contains code for the main function- you should write some code for
 
 
 def arg_setup():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser() # use argparse
+
     # ising model
+    parser.add_argument("-test_ising", action='store_true', default=False,
+                        help="-test_ising takes boolean values only; when true, the test code will run")
     parser.add_argument("-ising_model", action='store_true', default=False,
                         help="-ising_model runs the ising model")
     parser.add_argument("-external", default=0, help="-external sets the value of 'h' for the ising model")
     parser.add_argument("-alpha",
                         help="-alpha sets the value of how tolerant a society is of those who disagree with their neighbours for the ising model")
+
+    # networks
+    parser.add_argument("-network", type=int,
+                        help="size of network")  # network size argument, integer value, by default 10
+    parser.add_argument("-test_networks", action='store_true',
+                        default=False, help="-test_networks runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
+
     # defuant model
     parser.add_argument("-test_defuant", action='store_true', default=False,
-                        help="-test_defuant takes boolean values only. When present, must write 'True' and the test code will run")
+                        help="-test_defuant takes boolean values only; when true, the test code will run")
     parser.add_argument("-defuant", action='store_true', default=False,
                         help="-defuant runs the defuant model")
     parser.add_argument("-beta", default=0.5,
@@ -570,18 +580,24 @@ def main():
 
     if args.test_defuant:
         test_defuant()
+
     if args.defuant:
         defuant_main(args.threshold, args.beta)
+
+    if args.test_ising:
+        test_ising()
+
     if args.ising:
         ising_main(ising_setup(), args.alpha, args.external)
-    # test_ising()
-    #
-    # population = ising_setup()
-    #
-    # alpha = 10
-    # external = 0.0
-    #
-    # ising_main(population, args.alpha, args.external)
+
+    if args.test_networks:
+        test_networks()
+
+    if args.network:
+        network = Network().make_random_network(args.network)  # uses size argument
+        print('Mean degree=', network.get_mean_degree())
+        print('Mean path length=', network.get_mean_path_length())
+        print('Mean cluster coefficient=', network.get_mean_clustering())
 
 
 if __name__ == "__main__":
