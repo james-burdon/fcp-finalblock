@@ -142,38 +142,35 @@ class Network:
                 if np.random.random() < connection_probability:
                     node.connections[neighbour_index] = 1
                     self.nodes[neighbour_index].connections[index] = 1
+
         return self
 
     def make_ring_network(self, N, neighbour_range=1):
-        nodes = []
-        edges = []
-        num_nodes = N
-        for node_number in range(num_nodes):
-            connections = [0 for _ in range(num_nodes)]
+        self.nodes = []
+        for node_number in range(N):
+            connections = [0 for _ in range(N)]
             for distance in range(1, neighbour_range + 1):
-                connections[(node_number - distance) % num_nodes] = 1
-                connections[(node_number + distance) % num_nodes] = 1
+                connections[(node_number - distance) % N] = 1
+                connections[(node_number + distance) % N] = 1
             new_node = Node(np.random.random(), node_number, connections=connections)
-            edges.append(connections)
-            nodes.append(new_node)
+            self.nodes.append(new_node)
 
-        return edges, nodes
+        return self
 
     def make_small_world_network(self, N, re_wire_prob=0.2):
-        edges, nodes = self.make_ring_network(N, neighbour_range=2)
-        network = Network(nodes)
-        network.plot()
+        starting_network = self.make_ring_network(N, neighbour_range=2)
+        # starting_network.plot()
 
         # connection counting script
         # connections_before = 0
         # rewires = 0
-        # for node in nodes:
+        # for node in starting_network.nodes:
         # print(node.connections)
         # for i, connection in enumerate(node.connections):
         # if connection == 1:
         # connections_before += 1
 
-        for node_no, node in enumerate(nodes):
+        for node_no, node in enumerate(starting_network.nodes):
             connected = [edge_no for edge_no, edge in enumerate(node.connections)
                          if edge_no != node_no and edge == 1]
             for edge in connected:
@@ -186,7 +183,7 @@ class Network:
 
         # connection counting script
         # connections_after = 0
-        # for node in nodes:
+        # for node in starting_network.nodes:
         # print(node.connections)
         # for i, connection in enumerate(node.connections):
         # if connection == 1:
@@ -196,13 +193,20 @@ class Network:
         # print(f"Number of rewires performed: {rewires}")
         # print(f"Connections after: {connections_after}")
 
-        return nodes
+        return self
 
     def plot(self):
+
+        args = arg_setup()
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_axis_off()
+
+        if args.ring_network:
+            ax.set_title("Ring Network")
+        elif args.small_world:
+            ax.set_title(f"Small Worlds Network (re-wire prob = {args.re_wire})")
 
         num_nodes = len(self.nodes)
         network_radius = num_nodes * 10
@@ -274,13 +278,6 @@ def test_networks():
     print("All tests passed")
 
 
-def independent_test():
-    network = Network()
-    nodes = network.make_small_world_network(20, 0.2)
-    network2 = Network(nodes)
-    network2.plot()
-
-
 '''
 ==============================================================================================================
 This section contains code for the Ising Model - task 1 in the assignment
@@ -288,7 +285,7 @@ This section contains code for the Ising Model - task 1 in the assignment
 '''
 
 
-def calculate_agreement(population, row, col, external):
+def calculate_agreement(population, row, col, external=0.0):
     '''
     This function should return the *change* in agreement that would result if the cell at (row, col) was to flip it's value
     Inputs: population (numpy array)
@@ -318,7 +315,7 @@ def calculate_agreement(population, row, col, external):
     return agreement
 
 
-def ising_step(population, alpha, external):
+def ising_step(population, alpha, external=0.0):
     '''
     This function will perform a single update of the Ising model
     Inputs: population (numpy array)
@@ -387,12 +384,12 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha, external):
+def ising_main(population, alpha, external=0.0):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
-    ax.set_title(f"External: {format(external,".3f")}, Alpha: {format(alpha,".3f")}")
+    ax.set_title(f"External: {format(external,'.3f')}, Alpha: {format(alpha,'.3f')}")
 
     # Iterating an update 100 times
     for frame in range(100):
@@ -556,9 +553,9 @@ def arg_setup():
     # networks
     parser.add_argument("-network", type=int,
                         help="size of network")  # network size argument, integer value
-    parser.add_argument("-test_networks", action='store_true',
+    parser.add_argument("-test_network", action='store_true',
                         default=False,
-                        help="-test_networks runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
+                        help="-test_network runs tests on the networks model")  # tests if code functions well, if nothing is inputted then will not test
 
     # defuant model
     parser.add_argument("-test_defuant", action='store_true', default=False,
@@ -569,11 +566,17 @@ def arg_setup():
                         help="-beta sets the value of the coupling parameter for the defuant model")
     parser.add_argument("-threshold", type=float, default=0.5,
                         help="-threshold sets the value of the threshold for accepted opinion difference for the defuant model")
-    args = parser.parse_args()
 
     # ring_network stuff
     parser.add_argument("-ring_network", type=int,
                         help="-ring_network determines no. of nodes in network")  # network size argument, integer value, by default 10
+    parser.add_argument("-small_world", type=int,
+                        help="-small_world determines no. of nodes in network")
+    parser.add_argument("-re_wire", default=0, type=float,
+                        help="-re_wire determines probability. Should be between 0 and 1")
+
+    args = parser.parse_args()
+    assert 0 <= args.re_wire <= 1, 're_wire is a probability, thus must be between 0 and 1'
 
     return args
 
@@ -594,7 +597,7 @@ def main():
     if args.ising_model:  # runs ising model if flag detected
         ising_main(ising_setup(), args.alpha, args.external)
 
-    if args.test_networks:  # tests for networks modelling stuff if flag detected
+    if args.test_network:  # tests for networks modelling stuff if flag detected
         test_networks()
 
     if args.network:  # runs networks modelling stuff if flag detected
@@ -603,6 +606,14 @@ def main():
         print('Mean degree:', network.get_mean_degree())
         print('Average path length:', network.get_mean_path_length())
         print('Clustering co-efficient:', network.get_mean_clustering())
+
+    if args.ring_network:  # runs ring networks modelling stuff if flag detected
+        ring_network = Network().make_ring_network(20, 3)
+        ring_network.plot()
+
+    if args.small_world:  # runs small world code if flag detected
+        small_world_network = Network().make_small_world_network(20, args.re_wire)
+        small_world_network.plot()
 
 
 if __name__ == "__main__":
