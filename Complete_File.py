@@ -493,6 +493,8 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.tight_layout()
     plt.show()
 
+def defuant_network(size):
+    pass
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between some tests
@@ -575,6 +577,10 @@ def arg_setup():
     parser.add_argument("-re_wire", default=0, type=float,
                         help="-re_wire determines probability. Should be between 0 and 1")
 
+    # additional network code for defuant model
+    parser.add_argument("-use_network", type=int,
+                        help="-use_network converts the defuant model to a network and calculates accordingly")
+
     args = parser.parse_args()
     assert 0 <= args.re_wire <= 1, 're_wire is a probability, thus must be between 0 and 1'
 
@@ -589,7 +595,10 @@ def main():
         test_defuant()
 
     if args.defuant:  # runs defuant model if flag detected
-        defuant_main(args.threshold, args.beta)
+        if not args.use_network:
+            defuant_main(args.threshold, args.beta)
+        else:
+            defuant_network(args.use_network)
 
     if args.test_ising:  # tests for ising model if flag detected
         test_ising()
