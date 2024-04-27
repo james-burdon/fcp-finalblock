@@ -217,7 +217,7 @@ class Network:
             node_angle = i * 2 * np.pi / num_nodes
             node_x = network_radius * np.cos(node_angle)
             node_y = network_radius * np.sin(node_angle)
-            circle = plt.Circle((node_x, node_y), 0.3 * num_nodes, color=cm.hot(node.value))
+            circle = plt.Circle((node_x, node_y), 0.3 * num_nodes, color=cm.spring(node.value))
             ax.add_patch(circle)
 
             for neighbour_index in range(i + 1, num_nodes):
@@ -450,14 +450,23 @@ def random_person_and_neighbour(grid_size=100):
 
 
 def opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter):
+    args = arg_setup()
     # calculates opinion difference
-    opinion_diff = abs(grid[rand_person] - grid[rand_neighbour])
+    if not args.use_network:
+        opinion_diff = abs(grid[rand_person] - grid[rand_neighbour])
+    else:
+        opinion_diff = abs(grid[rand_person].value - grid[rand_neighbour].value)
 
-    if opinion_diff < threshold:
+    if opinion_diff < threshold and not args.use_network:
         new_op_person = round(grid[rand_person] + coupling_parameter * (grid[rand_neighbour] - grid[rand_person]), 8)
         new_op_neighbour = round(grid[rand_neighbour] + coupling_parameter * (grid[rand_person] - grid[rand_neighbour]),
                                  8)
         grid[rand_person], grid[rand_neighbour] = new_op_person, new_op_neighbour
+    elif opinion_diff < threshold and args.use_network:
+        new_op_person = round(grid[rand_person].value + coupling_parameter * (grid[rand_neighbour].value - grid[rand_person].value), 8)
+        new_op_neighbour = round(grid[rand_neighbour].value + coupling_parameter * (grid[rand_person].value - grid[rand_neighbour].value),
+                                 8)
+        grid[rand_person].value, grid[rand_neighbour].value = new_op_person, new_op_neighbour
     return grid
 
 
@@ -493,8 +502,49 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.tight_layout()
     plt.show()
 
-def defuant_network(size):
-    pass
+def defuant_network(size, threshold, coupling_parameter):
+    network = Network().make_small_world_network(size)
+    network.plot()
+
+    for i in range(100):
+        for node in network.nodes:
+            random_node_selected = np.random.randint(0, size)
+            random_node = network.nodes[random_node_selected]
+
+            # determines whether the neighbour will the right or the left
+            decide_rand_neighbour = random.randint(1, 2)
+
+            # sets the index of the neighbour using circular boundaries
+            if decide_rand_neighbour == 1:
+                rand_neighbour_selected = (random_node_selected - 1) % size
+            else:
+                rand_neighbour_selected = (random_node_selected + 1) % size
+            
+            rand_neighbour = network.nodes[rand_neighbour_selected]
+
+            # updates grid with new opinions
+            grid = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
+        # creates list of times to use for scatter plot creation
+        time_array = np.full((1, 100), (i + 1), dtype=int)[0]
+        # graph plotting for the scatter varying with time/interactions
+        #plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i + 1}')
+        #plt.scatter(time_array, grid, 15, c='r')
+        #plt.xlabel('No. of Iterations')
+        #plt.ylabel('Opinions')
+
+        network.plot()
+        plt.pause(0.1)
+    
+    # graph plotting for the histogram of opinions
+    #plt.subplot(1, 2, 1)
+    #plt.hist(grid, bins=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], edgecolor='black')
+    #plt.ylabel('No. of people')
+    #plt.xlabel('Opinion rating')
+    #plt.xticks([0.2, 0.4, 0.6, 0.8, 1.0])
+    # plt.grid(axis='y', alpha=0.75)
+    #plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{100}')
+    #plt.tight_layout()
+    #plt.show()
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between some tests
@@ -598,7 +648,7 @@ def main():
         if not args.use_network:
             defuant_main(args.threshold, args.beta)
         else:
-            defuant_network(args.use_network)
+            defuant_network(args.use_network, args.threshold, args.beta)
 
     if args.test_ising:  # tests for ising model if flag detected
         test_ising()
