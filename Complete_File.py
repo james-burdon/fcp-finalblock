@@ -195,7 +195,7 @@ class Network:
 
         return self
 
-    def plot(self):
+    def plot(self,  showplot=True):
 
         args = arg_setup()
 
@@ -226,8 +226,8 @@ class Network:
                     neighbour_x = network_radius * np.cos(neighbour_angle)
                     neighbour_y = network_radius * np.sin(neighbour_angle)
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
-
-        plt.show()
+        if showplot:
+            plt.show()
 
 
 def test_networks():
@@ -504,7 +504,7 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
 
 def defuant_network(size, threshold, coupling_parameter):
     network = Network().make_small_world_network(size)
-    network.plot()
+    network.plot(showplot=False)
 
     for i in range(100):
         for node in network.nodes:
@@ -523,7 +523,7 @@ def defuant_network(size, threshold, coupling_parameter):
             rand_neighbour = network.nodes[rand_neighbour_selected]
 
             # updates grid with new opinions
-            grid = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
+            network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
         # creates list of times to use for scatter plot creation
         time_array = np.full((1, 100), (i + 1), dtype=int)[0]
         # graph plotting for the scatter varying with time/interactions
@@ -532,7 +532,7 @@ def defuant_network(size, threshold, coupling_parameter):
         #plt.xlabel('No. of Iterations')
         #plt.ylabel('Opinions')
 
-        network.plot()
+        network.plot(showplot=False)
         plt.pause(0.1)
     
     # graph plotting for the histogram of opinions
