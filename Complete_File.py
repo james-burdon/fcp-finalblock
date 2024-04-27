@@ -509,6 +509,8 @@ def defuant_network(size, threshold, coupling_parameter):
     network = Network().make_small_world_network(size)
     print(network.nodes)
 
+    fig = plt.figure()
+
     for node in network.nodes:
         random_node_selected = np.random.randint(0, size)
         #random_node = network.nodes[random_node_selected]
@@ -525,6 +527,10 @@ def defuant_network(size, threshold, coupling_parameter):
         network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
 
     print(network.nodes)
+
+def animate_defuant_network():
+    
+    FuncAnimation(fig, )
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between some tests
