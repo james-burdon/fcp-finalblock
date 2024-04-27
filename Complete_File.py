@@ -505,32 +505,38 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.tight_layout()
     plt.show()
 
-def defuant_network(size, threshold, coupling_parameter):
+def defuant_network(network, size, threshold, coupling_parameter):
+    #network = Network().make_small_world_network(size)
+    #print(network.nodes)
+
+    #fig = plt.figure()
+
+    #for node in network.nodes:
+    random_node_selected = np.random.randint(0, size)
+    #random_node = network.nodes[random_node_selected]
+    # determines whether the neighbour will the right or the left
+    decide_rand_neighbour = random.randint(1, 2)
+    # sets the index of the neighbour using circular boundaries
+    if decide_rand_neighbour == 1:
+        rand_neighbour_selected = (random_node_selected - 1) % size
+    else:
+        rand_neighbour_selected = (random_node_selected + 1) % size
+
+    #rand_neighbour = network.nodes[rand_neighbour_selected]
+    # updates network with new opinions
+    network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
+
+    #print(network.nodes)
+    return network
+
+def animate_defuant_network(size, threshold, coupling_parameter):
     network = Network().make_small_world_network(size)
-    print(network.nodes)
-
     fig = plt.figure()
+    anim_func = defuant_network(network, size, threshold, coupling_parameter)
 
-    for node in network.nodes:
-        random_node_selected = np.random.randint(0, size)
-        #random_node = network.nodes[random_node_selected]
-        # determines whether the neighbour will the right or the left
-        decide_rand_neighbour = random.randint(1, 2)
-        # sets the index of the neighbour using circular boundaries
-        if decide_rand_neighbour == 1:
-            rand_neighbour_selected = (random_node_selected - 1) % size
-        else:
-            rand_neighbour_selected = (random_node_selected + 1) % size
-        
-        #rand_neighbour = network.nodes[rand_neighbour_selected]
-        # updates network with new opinions
-        network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
+    animated_thing = FuncAnimation(fig, anim_func, frames=120, interval=1000/2)
+    animated_thing.save('animation.mp4', fps=2)
 
-    print(network.nodes)
-
-def animate_defuant_network():
-    
-    FuncAnimation(fig, )
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between some tests
@@ -574,7 +580,6 @@ def test_defuant():
 This section contains code for the main function- you should write some code for handling flags here
 ==============================================================================================================
 '''
-
 
 def arg_setup():
     parser = argparse.ArgumentParser()  # use argparse
@@ -634,7 +639,8 @@ def main():
         if not args.use_network:
             defuant_main(args.threshold, args.beta)
         else:
-            defuant_network(args.use_network, args.threshold, args.beta)
+            #defuant_network(args.use_network, args.threshold, args.beta)
+            animate_defuant_network(args.use_network, args.threshold, args.beta)
 
     if args.test_ising:  # tests for ising model if flag detected
         test_ising()
