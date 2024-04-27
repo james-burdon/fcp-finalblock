@@ -509,7 +509,7 @@ def defuant_network(size, threshold, coupling_parameter):
     for i in range(100):
         for node in network.nodes:
             random_node_selected = np.random.randint(0, size)
-            random_node = network.nodes[random_node_selected]
+            #random_node = network.nodes[random_node_selected]
 
             # determines whether the neighbour will the right or the left
             decide_rand_neighbour = random.randint(1, 2)
@@ -520,12 +520,12 @@ def defuant_network(size, threshold, coupling_parameter):
             else:
                 rand_neighbour_selected = (random_node_selected + 1) % size
             
-            rand_neighbour = network.nodes[rand_neighbour_selected]
+            #rand_neighbour = network.nodes[rand_neighbour_selected]
 
             # updates grid with new opinions
-            grid = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
+            network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
         # creates list of times to use for scatter plot creation
-        time_array = np.full((1, 100), (i + 1), dtype=int)[0]
+        #time_array = np.full((1, 100), (i + 1), dtype=int)[0]
         # graph plotting for the scatter varying with time/interactions
         #plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i + 1}')
         #plt.scatter(time_array, grid, 15, c='r')
@@ -533,7 +533,8 @@ def defuant_network(size, threshold, coupling_parameter):
         #plt.ylabel('Opinions')
 
         network.plot()
-        plt.pause(0.1)
+        plt.pause(0.5)
+        plt.close()
     
     # graph plotting for the histogram of opinions
     #plt.subplot(1, 2, 1)
