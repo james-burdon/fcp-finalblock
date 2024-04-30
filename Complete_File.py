@@ -6,6 +6,7 @@ import argparse
 
 # required for the animation of the network version of the defuant model
 from matplotlib.animation import FuncAnimation
+plt.switch_backend('Agg')
 
 
 class Node:
@@ -614,14 +615,23 @@ def defuant_network(network, size, threshold, coupling_parameter):
     #print(network.nodes)
     return network
 
+def update_animation(frame, network, size, threshold, coupling_parameter):
+    network2 = defuant_network(network, size, threshold, coupling_parameter)
+
+    #plt.clf()
+    return network2.plot()
+
 def animate_defuant_network(size, threshold, coupling_parameter):
     network = Network().make_small_world_nw(size)
     fig = plt.figure()
-    anim_func = defuant_network(network, size, threshold, coupling_parameter)
-
-    animated_thing = FuncAnimation(fig, anim_func, frames=120, interval=1000/2)
-    animated_thing.save('animation.mp4', fps=2)
-
+    
+    animated_thing = FuncAnimation(fig, update_animation, 
+                                   fargs=(network, size, threshold,
+                                          coupling_parameter), frames=120, 
+                                          interval=1000/2)
+    #plt.show()
+    animated_thing.save('animation.mp4', writer="ffmpeg", fps=2)
+    #plt.show()
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between tests
