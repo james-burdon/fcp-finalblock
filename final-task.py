@@ -5,9 +5,9 @@ import random
 import argparse
 
 # required for the animation of the network version of the defuant model
-from matplotlib.animation import FuncAnimation
-plt.switch_backend('Agg')
-
+# from matplotlib.animation import FuncAnimation
+from matplotlib.animation import ArtistAnimation
+plt.ion() #use of plt.ion() to plot  live updates on figures as seen in task 5 animate 
 
 class Node:
 
@@ -25,10 +25,10 @@ class Node:
         # return(str(format(self.value,".2f")))
 
     def get_neighbours(self):
-        """_summary_
+        """ lists all neighbours of a node
 
         Returns:
-            _type_: _description_
+            list of neighbours
         """
         # list comprehension that displays all indexes of the neighbours
         return [i for i, connection in enumerate(self.connections) 
@@ -61,10 +61,10 @@ class Network:
     # question 1 for task 3, uses get neighbours function 
     # and computes average for each node
     def get_mean_degree(self):
-        """_summary_
+        """ checks how many neighbours a person has
 
         Returns:
-            _type_: _description_
+            avg number of neighbours
         """
         total = 0
         for node in self.nodes:
@@ -76,10 +76,10 @@ class Network:
     # question 2 for task 3, uses breadth-first search to find the mean path 
     # from one node to all others
     def get_mean_path_length(self):
-        """_summary_
+        """ find average distance from one node to every other node, checking isolation of node
 
         Returns:
-            _type_: _description_
+            the isolation of a node
         """
         total = 0
 
@@ -136,10 +136,10 @@ class Network:
 
     # question 3 for task 3, clustering coefficient
     def get_mean_clustering(self):
-        """_summary_
+        """ determines the average opinion of a localised group of people
 
         Returns:
-            _type_: _description_
+            value of opinion calculated
         """
         count = 0
 
@@ -203,14 +203,14 @@ class Network:
         return self
 
     def make_ring_network(self, N, neighbour_range=1):
-        """_summary_
+        """ forms the ring network variant of the network model
 
         Args:
-            N (_type_): _description_
-            neighbour_range (int, optional): _description_. Defaults to 1.
+            N (int): the number of nodes in the network
+            neighbour_range (int, optional): how many neighbours are examined. Defaults to 1.
 
         Returns:
-            _type_: _description_
+            updated network
         """
         self.nodes = []
         for node_number in range(N):
@@ -225,20 +225,23 @@ class Network:
 
     # small world network for task 4
     def make_small_world_nw(self, N, re_wire_prob=0.2):
-        """_summary_
+        """ forms a network for the small world model
+
+        ------- commented out is a counting mechanism for the network model which we were advised not to delete
 
         Args:
-            N (_type_): _description_
-            re_wire_prob (float, optional): _description_. Defaults to 0.2.
+            N (int): the number of nodes in the network
+            re_wire_prob (float, optional): probability of the network connections being changed. Defaults to 0.2.
 
         Returns:
-            _type_: _description_
+            updated network
         """
         # start with a ring network with neighbour range 2
         starting_network = self.make_ring_network(N, neighbour_range=2)
-        # starting_network.plot()
+        starting_network.plot()
 
-        # connection counting script
+        # connection counting script:
+
         # connections_before = 0
         # rewires = 0
         # for node in starting_network.nodes:
@@ -269,7 +272,8 @@ class Network:
                     # add to the number of rewires
                     # rewires += 1
 
-        # connection counting script
+        # connection counting script:
+
         # connections_after = 0
         # for node in starting_network.nodes:
         # print(node.connections)
@@ -284,19 +288,23 @@ class Network:
 
         return self
 
-    def plot(self, showplot=True):
-        """_summary_
+    def plot(self, for_animation=None): 
+        """ plots the inputted network
 
         Args:
-            showplot (bool, optional): _description_. Defaults to True.
+            showplot (bool, optional): Determines whether plot is displayed. Defaults to True.
 
         Returns:
-            _type_: _description_
+            the updated figure
         """
 
         args = arg_setup()
 
-        fig = plt.figure()
+        if not for_animation: #argument in the function to check if animation is required or not
+            fig = plt.figure()
+        else:
+            fig = for_animation
+
         ax = fig.add_subplot(111)
         ax.set_axis_off()
 
@@ -316,7 +324,7 @@ class Network:
             node_x = network_radius * np.cos(node_angle)
             node_y = network_radius * np.sin(node_angle)
             circle = plt.Circle((node_x, node_y), 0.3 * num_nodes, 
-                                color=cm.spring(node.value))
+                                color=cm.hot(node.value))
             ax.add_patch(circle)
 
             for neighbour_index in range(i + 1, num_nodes):
@@ -326,13 +334,13 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), 
                             color='black')
-        if showplot:
-            plt.show()
-
-        return fig
+        
+        plt.show()
 
 def test_networks():
-    """_summary_
+    """ test function for the networks models
+
+    Tests at three levels of function
     """
     # Ring network
     nodes = []
@@ -393,7 +401,7 @@ This section contains code for the Ising Model - task 1 in the assignment
 def calculate_agreement(population, row, col, external=0.0):
     '''
     This function should return the *change* in agreement that would result if 
-    the cell at (row, col) was to flip it's value
+    the cell at (row, col) was to flip its value
 
     Inputs: population (numpy array)
             row (int)
@@ -495,12 +503,12 @@ def test_ising():
 
 
 def ising_main(population, alpha, external=0.0):
-    """_summary_
+    """ runs related functions and plots the result
 
     Args:
-        population (_type_): _description_
-        alpha (_type_): _description_
-        external (float, optional): _description_. Defaults to 0.0.
+        population (numpy array): array containing the opinions of populace examined
+        alpha (float): represents tolerance of society of those who disagree with their neighbours
+        external (float, optional): introduces external opinions to the system. Defaults to 0.0.
     """
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -521,12 +529,12 @@ def find_neighbour_values(population, row, col):
     """_summary_
 
     Args:
-        population (_type_): _description_
-        row (_type_): _description_
-        col (_type_): _description_
+        population (int): the array of the populations of people examined
+        row (int): the index of the row containing person examined
+        col (int): the index of the column containing person examined
 
     Returns:
-        _type_: _description_
+        list of neighbours of person examined
     """
     n_rows = len(population)
     n_cols = len(population[0])
@@ -565,13 +573,13 @@ This section contains code for the Defuant Model - task 2 in the assignment
 
 
 def random_person_and_neighbour(grid_size=100):
-    """_summary_
+    """ randomly selects person and a random neighbour of theirs
 
     Args:
-        grid_size (int, optional): _description_. Defaults to 100.
+        grid_size (int, optional): determines no. of villagers. Defaults to 100.
 
     Returns:
-        _type_: _description_
+        indexes of random person and their random neighbour
     """
     # sets the index of the person being examined
     rand_person = random.randint(0, (grid_size - 1))
@@ -588,17 +596,17 @@ def random_person_and_neighbour(grid_size=100):
 
 def opinion_defuant(grid, rand_person, rand_neighbour, threshold, 
                     coupling_parameter):
-    """_summary_
+    """ calculates the opinion difference of the person and their neighbour
 
     Args:
-        grid (_type_): _description_
-        rand_person (_type_): _description_
-        rand_neighbour (_type_): _description_
-        threshold (_type_): _description_
-        coupling_parameter (_type_): _description_
+        grid (array): the array of each person's opinion
+        rand_person (int): index of the person being examined
+        rand_neighbour (int): index of the random neighbour of person being examined
+        threshold (float): the threshold for opinion difference, defined by the flags
+        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
 
     Returns:
-        _type_: _description_
+        updated grid (array), with new opinions for person and neighbour
     """
     args = arg_setup()
 
@@ -638,12 +646,12 @@ def opinion_defuant(grid, rand_person, rand_neighbour, threshold,
 
 
 def defuant_main(threshold, coupling_parameter, timesteps=100):
-    """_summary_
+    """ code for the defuant model; calls on related functions and plots results
 
     Args:
-        threshold (_type_): _description_
-        coupling_parameter (_type_): _description_
-        timesteps (int, optional): _description_. Defaults to 100.
+        threshold (float): the threshold for opinion difference, defined by the flags
+        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
+        timesteps (int, optional): arbitrary representation of no. of interactions.
     """
     # Creates grid of 100 people
     grid = np.random.rand(1, 100)[0]
@@ -681,19 +689,19 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.tight_layout()
     plt.show()
 
-def defuant_network(framenetwork, size, threshold, coupling_parameter):
-    """_summary_
+def defuant_network(network, size, threshold, coupling_parameter):
+    """ Turns the defuant model into a network
 
     Args:
-        network (_type_): _description_
-        size (_type_): _description_
-        threshold (_type_): _description_
-        coupling_parameter (_type_): _description_
+        network (network): the network class
+        size (integer): determines number of nodes in network
+        threshold (float): the threshold defined by the flags
+        coupling_parameter (float): also known as beta, set by the -beta flag, used in equations
 
     Returns:
-        _type_: _description_
+        updated network
     """
-    network = Network().make_small_world_nw(size)
+    #network = Network().make_small_world_nw(size)
     #print(network.nodes)
 
     #fig = plt.figure()
@@ -720,44 +728,42 @@ def defuant_network(framenetwork, size, threshold, coupling_parameter):
     #print(network.nodes)
     return network
 
-def update_animation( frame, network, size, threshold, coupling_parameter):
-    """_summary_
+def update_animation(network, size, threshold, coupling_parameter):
+    """ the function which updates the animation for each timestep
 
     Args:
-        frame (_type_): _description_
-        network (_type_): _description_
-        size (_type_): _description_
-        threshold (_type_): _description_
-        coupling_parameter (_type_): _description_
+        frame (int): the frame examined
+        network (network): the network examined
+        size (int): sets number of nodes in network
+        threshold (float): the threshold for opinion difference, defined by the flags
+        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
     """
-    #print('ARGS=' network, size, threshold, coupling_parameter)
-    network2 = defuant_network(network, size, threshold, coupling_parameter)
+    network = defuant_network(network, size, threshold, coupling_parameter)
 
-    plt.clf()
-    
-    return  network2.plot() 
+    return network
 
 def animate_defuant_network(size, threshold, coupling_parameter):
-    """_summary_
+    """ should produce animation of how the defuant network changes with time
 
     Args:
-        size (_type_): _description_
-        threshold (_type_): _description_
-        coupling_parameter (_type_): _description_
+        size (int): no. of nodes in network
+        threshold (float): the threshold for opinion difference, defined by the flags
+        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
     """
     network = Network().make_small_world_nw(size)
     fig = plt.figure()
-    #plt.show()
-    animated_thing = FuncAnimation( fig,update_animation, 
-                                   fargs=(network, size, threshold,
-                                          coupling_parameter), frames=120, 
-                                          interval=1000/2)
-    #plt.show()
-    animated_thing.save('animation.mp4', writer="ffmpeg", fps=2)
-    #plt.show()
+    network.plot(for_animation = fig) #argument for animation 
+    
+    for i in range(240):
+        network = update_animation(network, size, threshold, coupling_parameter)
+        fig.suptitle("Frame " + str(i)) #displays title
+        network.plot(for_animation = fig)
+        plt.pause(0.01)
+
+    plt.show()
 
 def test_defuant():
-    """_summary_
+    """ tests how the defuant model works with grid (opinion) updates
     """
     # tests the model for a set grid which is changed slightly between tests
 
@@ -806,10 +812,10 @@ you should write some code for handling flags here
 
 
 def arg_setup():
-    """_summary_
+    """ defines the flags taken by the code
 
     Returns:
-        _type_: _description_
+        dictionary of flag values
     """
     # use argparse
     parser = argparse.ArgumentParser()  
@@ -871,7 +877,7 @@ def arg_setup():
 
 
 def main():
-    """_summary_
+    """ uses the flags to determine which functions should be run
     """
     # code to handle flags
     args = arg_setup()
@@ -883,8 +889,10 @@ def main():
     # runs defuant model if flag detected
     if args.defuant:  
         if not args.use_network:
+            plt.ioff() #plt.i will crash single plots as in the defuant case
             defuant_main(args.threshold, args.beta)
         else:
+            plt.ion() #need for the animation
             #defuant_network(args.use_network, args.threshold, args.beta)
             animate_defuant_network(args.use_network, args.threshold, args.beta)
 
@@ -911,12 +919,14 @@ def main():
         print('Clustering co-efficient:', network.get_mean_clustering())
 
     # runs ring networks modelling stuff if flag detected
-    if args.ring_network:  
+    if args.ring_network: 
+        plt.ioff() #same case as the defuant graph
         ring_network = Network().make_ring_network(20, 3)
         ring_network.plot()
 
     # runs small world code if flag detected
     if args.small_world:  
+        plt.ioff()
         small_world_network = Network().make_small_world_nw(20, args.re_wire)
         small_world_network.plot()
 
