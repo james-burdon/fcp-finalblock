@@ -8,7 +8,7 @@ import argparse
 # from matplotlib.animation import FuncAnimation
 from matplotlib.animation import ArtistAnimation
 # plt.switch_backend('Agg')
-
+plt.ion()
 
 class Node:
 
@@ -239,7 +239,7 @@ class Network:
         """
         # start with a ring network with neighbour range 2
         starting_network = self.make_ring_network(N, neighbour_range=2)
-        # starting_network.plot()
+        starting_network.plot()
 
         # connection counting script:
 
@@ -289,7 +289,7 @@ class Network:
 
         return self
 
-    def plot(self, showplot=True):
+    def plot(self, for_animation=None):
         """ plots the inputted network
 
         Args:
@@ -301,7 +301,11 @@ class Network:
 
         args = arg_setup()
 
-        fig = plt.figure()
+        if not for_animation:
+            fig = plt.figure()
+        else:
+            fig = for_animation
+
         ax = fig.add_subplot(111)
         ax.set_axis_off()
 
@@ -321,7 +325,7 @@ class Network:
             node_x = network_radius * np.cos(node_angle)
             node_y = network_radius * np.sin(node_angle)
             circle = plt.Circle((node_x, node_y), 0.3 * num_nodes, 
-                                color=cm.spring(node.value))
+                                color=cm.hot(node.value))
             ax.add_patch(circle)
 
             for neighbour_index in range(i + 1, num_nodes):
@@ -331,10 +335,8 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), 
                             color='black')
-        if showplot:
-            plt.show()
-
-        return fig
+        
+        plt.show()
 
 def test_networks():
     """ test function for the networks models
@@ -727,7 +729,7 @@ def defuant_network(network, size, threshold, coupling_parameter):
     #print(network.nodes)
     return network
 
-def update_animation(frame, network, size, threshold, coupling_parameter):
+def update_animation(network, size, threshold, coupling_parameter):
     """ the function which updates the animation for each timestep
 
     Args:
@@ -750,10 +752,14 @@ def animate_defuant_network(size, threshold, coupling_parameter):
         coupling_parameter (float): also known as beta, set by -beta flag, used in equations
     """
     network = Network().make_small_world_nw(size)
-
+    fig = plt.figure()
+    network.plot(for_animation = fig)
+    
     for i in range(240):
         network = update_animation(network, size, threshold, coupling_parameter)
-        network.plot()
+        fig.suptitle("Frame " + str(i))
+        network.plot(for_animation = fig)
+        plt.pause(0.01)
 
     plt.show()
 
