@@ -80,3 +80,4 @@ Check comments and docstrings in the file `Complete_File.py` for more detailed e
 ## Other notes
 
 - `make_small_world` includes a commented out edge-counting script. This script counts the number of edges the network starts with, the number of rewires that occur, and the number of edges after the rewiring. The number of edges are the same before and after the rewiring. **All lines in this function need to be uncommented for it to work**
+- Individual work on tasks can be found in the named branches. Work was done on each individual branch before the merge onto main
