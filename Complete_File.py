@@ -17,7 +17,7 @@ class Node:
         self.value = value
 
     def __repr__(self):  
-        # built in function so that list with objects 
+        # built in function so that the list with objects 
         # displays a more understandable format
         return ("Node %d has value %d" % (self.index, self.value))
     
@@ -25,6 +25,11 @@ class Node:
         # return(str(format(self.value,".2f")))
 
     def get_neighbours(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         # list comprehension that displays all indexes of the neighbours
         return [i for i, connection in enumerate(self.connections) 
                 if connection == 1]
@@ -55,7 +60,12 @@ class Network:
 
     # question 1 for task 3, uses get neighbours function 
     # and computes average for each node
-    def get_mean_degree(self):  
+    def get_mean_degree(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         total = 0
         for node in self.nodes:
             total += len(node.get_neighbours())
@@ -65,7 +75,12 @@ class Network:
 
     # question 2 for task 3, uses breadth-first search to find the mean path 
     # from one node to all others
-    def get_mean_path_length(self):     
+    def get_mean_path_length(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         total = 0
 
         # for every node
@@ -120,7 +135,12 @@ class Network:
         return total / len(self.nodes)
 
     # question 3 for task 3, clustering coefficient
-    def get_mean_clustering(self):  
+    def get_mean_clustering(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         count = 0
 
         # for all nodes
@@ -183,6 +203,15 @@ class Network:
         return self
 
     def make_ring_network(self, N, neighbour_range=1):
+        """_summary_
+
+        Args:
+            N (_type_): _description_
+            neighbour_range (int, optional): _description_. Defaults to 1.
+
+        Returns:
+            _type_: _description_
+        """
         self.nodes = []
         for node_number in range(N):
             connections = [0 for _ in range(N)]
@@ -196,6 +225,15 @@ class Network:
 
     # small world network for task 4
     def make_small_world_nw(self, N, re_wire_prob=0.2):
+        """_summary_
+
+        Args:
+            N (_type_): _description_
+            re_wire_prob (float, optional): _description_. Defaults to 0.2.
+
+        Returns:
+            _type_: _description_
+        """
         # start with a ring network with neighbour range 2
         starting_network = self.make_ring_network(N, neighbour_range=2)
         # starting_network.plot()
@@ -247,6 +285,14 @@ class Network:
         return self
 
     def plot(self, showplot=True):
+        """_summary_
+
+        Args:
+            showplot (bool, optional): _description_. Defaults to True.
+
+        Returns:
+            _type_: _description_
+        """
 
         args = arg_setup()
 
@@ -283,7 +329,11 @@ class Network:
         if showplot:
             plt.show()
 
+        return fig
+
 def test_networks():
+    """_summary_
+    """
     # Ring network
     nodes = []
     num_nodes = 10
@@ -445,6 +495,13 @@ def test_ising():
 
 
 def ising_main(population, alpha, external=0.0):
+    """_summary_
+
+    Args:
+        population (_type_): _description_
+        alpha (_type_): _description_
+        external (float, optional): _description_. Defaults to 0.0.
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
@@ -461,6 +518,16 @@ def ising_main(population, alpha, external=0.0):
         plot_ising(im, population)
 
 def find_neighbour_values(population, row, col):
+    """_summary_
+
+    Args:
+        population (_type_): _description_
+        row (_type_): _description_
+        col (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     n_rows = len(population)
     n_cols = len(population[0])
     # find all neighbours in the array
@@ -498,6 +565,14 @@ This section contains code for the Defuant Model - task 2 in the assignment
 
 
 def random_person_and_neighbour(grid_size=100):
+    """_summary_
+
+    Args:
+        grid_size (int, optional): _description_. Defaults to 100.
+
+    Returns:
+        _type_: _description_
+    """
     # sets the index of the person being examined
     rand_person = random.randint(0, (grid_size - 1))
     # determines whether the neighbour will the right or the left
@@ -513,6 +588,18 @@ def random_person_and_neighbour(grid_size=100):
 
 def opinion_defuant(grid, rand_person, rand_neighbour, threshold, 
                     coupling_parameter):
+    """_summary_
+
+    Args:
+        grid (_type_): _description_
+        rand_person (_type_): _description_
+        rand_neighbour (_type_): _description_
+        threshold (_type_): _description_
+        coupling_parameter (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     args = arg_setup()
 
     # calculates opinion difference
@@ -530,7 +617,7 @@ def opinion_defuant(grid, rand_person, rand_neighbour, threshold,
                                  (grid[rand_person] - grid[rand_neighbour]),8)
         
         # update the grid with the new information
-        grid[rand_person], grid[rand_neighbour] = new_op_person, 
+        grid[rand_person], grid[rand_neighbour] = new_op_person, \
         new_op_neighbour
     
     # if the network is being used instead, grid here is the network
@@ -551,6 +638,13 @@ def opinion_defuant(grid, rand_person, rand_neighbour, threshold,
 
 
 def defuant_main(threshold, coupling_parameter, timesteps=100):
+    """_summary_
+
+    Args:
+        threshold (_type_): _description_
+        coupling_parameter (_type_): _description_
+        timesteps (int, optional): _description_. Defaults to 100.
+    """
     # Creates grid of 100 people
     grid = np.random.rand(1, 100)[0]
 
@@ -588,6 +682,17 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.show()
 
 def defuant_network(network, size, threshold, coupling_parameter):
+    """_summary_
+
+    Args:
+        network (_type_): _description_
+        size (_type_): _description_
+        threshold (_type_): _description_
+        coupling_parameter (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     #network = Network().make_small_world_network(size)
     #print(network.nodes)
 
@@ -616,12 +721,29 @@ def defuant_network(network, size, threshold, coupling_parameter):
     return network
 
 def update_animation(frame, network, size, threshold, coupling_parameter):
+    """_summary_
+
+    Args:
+        frame (_type_): _description_
+        network (_type_): _description_
+        size (_type_): _description_
+        threshold (_type_): _description_
+        coupling_parameter (_type_): _description_
+    """
     network2 = defuant_network(network, size, threshold, coupling_parameter)
 
     #plt.clf()
-    return network2.plot()
+    network2.plot()
+    return 
 
 def animate_defuant_network(size, threshold, coupling_parameter):
+    """_summary_
+
+    Args:
+        size (_type_): _description_
+        threshold (_type_): _description_
+        coupling_parameter (_type_): _description_
+    """
     network = Network().make_small_world_nw(size)
     fig = plt.figure()
     
@@ -634,6 +756,8 @@ def animate_defuant_network(size, threshold, coupling_parameter):
     #plt.show()
 
 def test_defuant():
+    """_summary_
+    """
     # tests the model for a set grid which is changed slightly between tests
 
     # the threshold and coupling_parameter (representing 'beta') are changed
@@ -681,6 +805,11 @@ you should write some code for handling flags here
 
 
 def arg_setup():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     # use argparse
     parser = argparse.ArgumentParser()  
 
@@ -741,6 +870,8 @@ def arg_setup():
 
 
 def main():
+    """_summary_
+    """
     # code to handle flags
     args = arg_setup()
 
