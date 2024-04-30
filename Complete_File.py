@@ -448,7 +448,7 @@ def ising_main(population, alpha, external=0.0):
     ax = fig.add_subplot(111)
     ax.set_axis_off()
     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
-    ax.set_title(f"External: {format(external,'.3f')}, 
+    ax.set_title(f"External: {format(external,'.3f')}, \
                  Alpha: {format(alpha,'.3f')}")
 
     # Iterating an update 100 times
@@ -543,7 +543,7 @@ def opinion_defuant(grid, rand_person, rand_neighbour, threshold,
                                 - grid[rand_neighbour].value), 8)
         
         # update the network
-        grid[rand_person].value, grid[rand_neighbour].value = new_op_person, 
+        grid[rand_person].value, grid[rand_neighbour].value = new_op_person, \
         new_op_neighbour
     
     return grid
@@ -615,7 +615,7 @@ def defuant_network(network, size, threshold, coupling_parameter):
     return network
 
 def animate_defuant_network(size, threshold, coupling_parameter):
-    network = Network().make_small_world_network(size)
+    network = Network().make_small_world_nw(size)
     fig = plt.figure()
     anim_func = defuant_network(network, size, threshold, coupling_parameter)
 
