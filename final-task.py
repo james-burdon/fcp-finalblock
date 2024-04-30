@@ -4,6 +4,8 @@ import matplotlib.cm as cm
 import random
 import argparse
 
+from matplotlib.animation import FuncAnimation
+
 
 class Node:
 
@@ -13,7 +15,8 @@ class Node:
         self.value = value
 
     def __repr__(self):  # built in function so that list with objects displays a more understandable format
-        return ("Node %d has value %d" % (self.index, self.value))
+        #return ("Node %d has value %d" % (self.index, self.value))
+        return(str(format(self.value,".2f")))
 
     def get_neighbours(self):
         return [i for i in range(len(self.connections)) if self.connections[
@@ -195,7 +198,7 @@ class Network:
 
         return self
 
-    def plot(self,  showplot=True):
+    def plot(self, showplot=True):
 
         args = arg_setup()
 
@@ -228,7 +231,6 @@ class Network:
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
         if showplot:
             plt.show()
-
 
 def test_networks():
     # Ring network
@@ -451,6 +453,7 @@ def random_person_and_neighbour(grid_size=100):
 
 def opinion_defuant(grid, rand_person, rand_neighbour, threshold, coupling_parameter):
     args = arg_setup()
+
     # calculates opinion difference
     if not args.use_network:
         opinion_diff = abs(grid[rand_person] - grid[rand_neighbour])
@@ -504,47 +507,24 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
 
 def defuant_network(size, threshold, coupling_parameter):
     network = Network().make_small_world_network(size)
-    network.plot(showplot=False)
+    print(network.nodes)
 
-    for i in range(100):
-        for node in network.nodes:
-            random_node_selected = np.random.randint(0, size)
-            #random_node = network.nodes[random_node_selected]
+    for node in network.nodes:
+        random_node_selected = np.random.randint(0, size)
+        #random_node = network.nodes[random_node_selected]
+        # determines whether the neighbour will the right or the left
+        decide_rand_neighbour = random.randint(1, 2)
+        # sets the index of the neighbour using circular boundaries
+        if decide_rand_neighbour == 1:
+            rand_neighbour_selected = (random_node_selected - 1) % size
+        else:
+            rand_neighbour_selected = (random_node_selected + 1) % size
+        
+        #rand_neighbour = network.nodes[rand_neighbour_selected]
+        # updates network with new opinions
+        network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
 
-            # determines whether the neighbour will the right or the left
-            decide_rand_neighbour = random.randint(1, 2)
-
-            # sets the index of the neighbour using circular boundaries
-            if decide_rand_neighbour == 1:
-                rand_neighbour_selected = (random_node_selected - 1) % size
-            else:
-                rand_neighbour_selected = (random_node_selected + 1) % size
-            
-            #rand_neighbour = network.nodes[rand_neighbour_selected]
-
-            # updates grid with new opinions
-            network.nodes = opinion_defuant(network.nodes, random_node_selected, rand_neighbour_selected, threshold, coupling_parameter)
-        # creates list of times to use for scatter plot creation
-        #time_array = np.full((1, 100), (i + 1), dtype=int)[0]
-        # graph plotting for the scatter varying with time/interactions
-        #plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{i + 1}')
-        #plt.scatter(time_array, grid, 15, c='r')
-        #plt.xlabel('No. of Iterations')
-        #plt.ylabel('Opinions')
-
-        network.plot(showplot=False)
-        plt.pause(0.1)
-    
-    # graph plotting for the histogram of opinions
-    #plt.subplot(1, 2, 1)
-    #plt.hist(grid, bins=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], edgecolor='black')
-    #plt.ylabel('No. of people')
-    #plt.xlabel('Opinion rating')
-    #plt.xticks([0.2, 0.4, 0.6, 0.8, 1.0])
-    # plt.grid(axis='y', alpha=0.75)
-    #plt.title(f'Beta:{coupling_parameter}, T:{threshold}, t:{100}')
-    #plt.tight_layout()
-    #plt.show()
+    print(network.nodes)
 
 def test_defuant():
     # tests the model for a set grid which is changed slightly between some tests
