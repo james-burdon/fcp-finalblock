@@ -7,8 +7,7 @@ import argparse
 # required for the animation of the network version of the defuant model
 # from matplotlib.animation import FuncAnimation
 from matplotlib.animation import ArtistAnimation
-# plt.switch_backend('Agg')
-plt.ion()
+plt.ion() #use of plt.ion() to plot  live updates on figures as seen in task 5 animate 
 
 class Node:
 
@@ -289,7 +288,7 @@ class Network:
 
         return self
 
-    def plot(self, for_animation=None):
+    def plot(self, for_animation=None): 
         """ plots the inputted network
 
         Args:
@@ -301,7 +300,7 @@ class Network:
 
         args = arg_setup()
 
-        if not for_animation:
+        if not for_animation: #argument in the function to check if animation is required or not
             fig = plt.figure()
         else:
             fig = for_animation
@@ -753,11 +752,11 @@ def animate_defuant_network(size, threshold, coupling_parameter):
     """
     network = Network().make_small_world_nw(size)
     fig = plt.figure()
-    network.plot(for_animation = fig)
+    network.plot(for_animation = fig) #argument for animation 
     
     for i in range(240):
         network = update_animation(network, size, threshold, coupling_parameter)
-        fig.suptitle("Frame " + str(i))
+        fig.suptitle("Frame " + str(i)) #displays title
         network.plot(for_animation = fig)
         plt.pause(0.01)
 
@@ -890,8 +889,10 @@ def main():
     # runs defuant model if flag detected
     if args.defuant:  
         if not args.use_network:
+            plt.ioff() #plt.i will crash single plots as in the defuant case
             defuant_main(args.threshold, args.beta)
         else:
+            plt.ion() #need for the animation
             #defuant_network(args.use_network, args.threshold, args.beta)
             animate_defuant_network(args.use_network, args.threshold, args.beta)
 
@@ -918,12 +919,14 @@ def main():
         print('Clustering co-efficient:', network.get_mean_clustering())
 
     # runs ring networks modelling stuff if flag detected
-    if args.ring_network:  
+    if args.ring_network: 
+        plt.ioff() #same case as the defuant graph
         ring_network = Network().make_ring_network(20, 3)
         ring_network.plot()
 
     # runs small world code if flag detected
     if args.small_world:  
+        plt.ioff()
         small_world_network = Network().make_small_world_nw(20, args.re_wire)
         small_world_network.plot()
 
