@@ -5,8 +5,9 @@ import random
 import argparse
 
 # required for the animation of the network version of the defuant model
-from matplotlib.animation import FuncAnimation
-plt.switch_backend('Agg')
+# from matplotlib.animation import FuncAnimation
+from matplotlib.animation import ArtistAnimation
+# plt.switch_backend('Agg')
 
 
 class Node:
@@ -693,7 +694,7 @@ def defuant_network(network, size, threshold, coupling_parameter):
     Returns:
         _type_: _description_
     """
-    #network = Network().make_small_world_network(size)
+    #network = Network().make_small_world_nw(size)
     #print(network.nodes)
 
     #fig = plt.figure()
@@ -720,7 +721,7 @@ def defuant_network(network, size, threshold, coupling_parameter):
     #print(network.nodes)
     return network
 
-def update_animation(frame, network, size, threshold, coupling_parameter):
+def update_animation(network, size, threshold, coupling_parameter):
     """_summary_
 
     Args:
@@ -730,11 +731,9 @@ def update_animation(frame, network, size, threshold, coupling_parameter):
         threshold (_type_): _description_
         coupling_parameter (_type_): _description_
     """
-    network2 = defuant_network(network, size, threshold, coupling_parameter)
+    network = defuant_network(network, size, threshold, coupling_parameter)
 
-    #plt.clf()
-    network2.plot()
-    return 
+    return network
 
 def animate_defuant_network(size, threshold, coupling_parameter):
     """_summary_
@@ -745,15 +744,12 @@ def animate_defuant_network(size, threshold, coupling_parameter):
         coupling_parameter (_type_): _description_
     """
     network = Network().make_small_world_nw(size)
-    fig = plt.figure()
-    
-    animated_thing = FuncAnimation(fig, update_animation, 
-                                   fargs=(network, size, threshold,
-                                          coupling_parameter), frames=120, 
-                                          interval=1000/2)
-    #plt.show()
-    animated_thing.save('animation.mp4', writer="ffmpeg", fps=2)
-    #plt.show()
+
+    for i in range(240):
+        network = update_animation(network, size, threshold, coupling_parameter)
+        network.plot()
+
+    plt.show()
 
 def test_defuant():
     """_summary_
