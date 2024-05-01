@@ -2,7 +2,7 @@
 
 ## Group 3
 
-James Burdon, Archie Burton and Eric Chen
+James Burdon, James (Archie) Burton and Eric Chen
 
 **Individual work on tasks can be found in the named branches.** \
 **Work was done on each individual branch before the merge onto main.**
