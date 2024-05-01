@@ -174,7 +174,7 @@ class Network:
                             # use of sets for this
                             edge_count += 1
                             edges += [{thing, item[0]}]
-                mean_count += edges / possible_connection
+                mean_count += len(edges) / possible_connection
 
 
         # return the mean clustering
@@ -348,6 +348,7 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), 
                             color='black')
+        plt.show()
                     
 
 def test_networks():
