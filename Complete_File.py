@@ -197,7 +197,8 @@ class Network:
                 if np.random.random() < connection_probability:
                     node.connections[neighbour_index] = 1
                     self.nodes[neighbour_index].connections[index] = 1
-
+        self.plot()
+        plt.show()
         return self
 
     def make_ring_network(self, N, neighbour_range=1):
