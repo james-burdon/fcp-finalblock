@@ -62,12 +62,12 @@ class Network:
         Returns:
             avg number of neighbours
         """
-        total = 0
+        neighbour_sum = 0
         for node in self.nodes:
-            total += len(node.get_neighbours())
+            neighbour_sum += len(node.get_neighbours())
         
         # return mean 
-        return total / len(self.nodes)  
+        return neighbour_sum / len(self.nodes)  
 
     # question 2 for task 3, uses breadth-first search to find the mean path 
     # from one node to all others
@@ -78,11 +78,11 @@ class Network:
         Returns:
             the isolation of a node
         """
-        total = 0
+        nodes_mean_path_length_sum = 0 #sum of all mean path_length of nodes
 
         # for every node
         for node in self.nodes:  
-            total1 = 0
+            single_node_sum = 0 #sum of path lengths of one node to all nodes
 
             # for every different node than the one looped through
             for elem in self.nodes:
@@ -124,12 +124,12 @@ class Network:
                     # add the start node to the route
                     route.append(node_to_check)
 
-                    total2 = len(route) - 1
+                    path_length = len(route) - 1
 
                     # sums to compute the average
-                    total1 += total2  
-            total += total1 / (len(self.nodes) - 1)
-        return total / len(self.nodes)
+                    single_node_sum += path_length  
+            nodes_mean_path_length_sum += single_node_sum / (len(self.nodes) - 1)
+        return nodes_mean_path_length_sum / len(self.nodes)
 
     # question 3 for task 3, clustering coefficient
     def get_mean_clustering(self):
@@ -138,7 +138,7 @@ class Network:
         Returns:
             value of opinion calculated
         """
-        count = 0
+        mean_count = 0 #sum of all the means used to find mean clustering at the end
 
         # for all nodes
         for node in self.nodes:  
@@ -152,33 +152,29 @@ class Network:
             # exclude 0 connections as cannot divide by 0 at the end
             if possible_connection != 0:
                 # count of edges between neighbours
-                count1 = 0  
-                Biglist = []
+                edge_count = 0  
+                Connection_list = [] #2 Dimension list with every single node an its neighbours
                 # list to check for same edges such as 1-0 and 0-1
                 edges = []
-
-                ######################################################
-                # get better names for these variables and comments  #
-                ######################################################
-
                 # for every neighbour, add neighbours of the neighbours 
-                # to the Biglist
+                # to the Connection_list
                 for neighbour in neighbour_list:
                     # neighbours of these nodes
-                    Biglist.append((neighbour, 
+                    Connection_list.append((neighbour, 
                                     self.nodes[neighbour].get_neighbours()))
 
                 # for every neighbour of neighbour
-                for item in Biglist:
+                for item in Connection_list:
                     for thing in item[1]:
                         if thing in neighbour_list and \
                             {thing, item[0]} not in edges:  
                             # use of sets for this
-                            count1 += 1
+                            edge_count += 1
                             edges += [{thing, item[0]}]
-                count += count1 / possible_connection
+                mean_count += edge / possible_connection
 
-        return count / len(self.nodes)
+        return mean_count / len(self.nodes) #gives mean clustering
+
 
     def make_random_network(self, N, connection_probability=0.5):
         '''
