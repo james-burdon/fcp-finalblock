@@ -128,7 +128,7 @@ class Network:
 
                     # sums to compute the average
                     single_node_sum += path_length  
-            nodes_mean_path_length_sum += single_node_sum / (len(self.nodes) - 1)
+            nodes_mean_path_length_sum += single_node_sum / (len(self.nodes)- 1)
         return nodes_mean_path_length_sum / len(self.nodes)
 
     # question 3 for task 3, clustering coefficient
@@ -138,7 +138,8 @@ class Network:
         Returns:
             value of opinion calculated
         """
-        mean_count = 0 #sum of all the means used to find mean clustering at the end
+        #sum of all the means used to find mean clustering at the end
+        mean_count = 0 
 
         # for all nodes
         for node in self.nodes:  
@@ -152,33 +153,33 @@ class Network:
             # exclude 0 connections as cannot divide by 0 at the end
             if possible_connection != 0:
                 # count of edges between neighbours
-                edge_count = 0  
-                Connection_list = [] #2 Dimension list with every single node an its neighbours
+                edge_count = 0
+
+                # 2 dimension list with every single node an its neighbours
+                connection_list = []
                 # list to check for same edges such as 1-0 and 0-1
                 edges = []
-
-                ######################################################
-                # get better names for these variables and comments  #
-                ######################################################
-
                 # for every neighbour, add neighbours of the neighbours 
-                # to the Biglist
+                # to the connection_list
                 for neighbour in neighbour_list:
                     # neighbours of these nodes
-                    Connection_list.append((neighbour, 
+                    connection_list.append((neighbour, 
                                     self.nodes[neighbour].get_neighbours()))
 
                 # for every neighbour of neighbour
-                for item in Connection_list:
+                for item in connection_list:
                     for thing in item[1]:
                         if thing in neighbour_list and \
                             {thing, item[0]} not in edges:  
                             # use of sets for this
                             edge_count += 1
                             edges += [{thing, item[0]}]
-                mean_count += edge / possible_connection
+                mean_count += edges / possible_connection
 
-        return mean_count / len(self.nodes) #gives mean clustering
+
+        # return the mean clustering
+        return mean_count / len(self.nodes)
+
 
     def make_random_network(self, N, connection_probability=0.5):
         '''
@@ -197,7 +198,8 @@ class Network:
                 if np.random.random() < connection_probability:
                     node.connections[neighbour_index] = 1
                     self.nodes[neighbour_index].connections[index] = 1
-
+        self.plot()
+        plt.show()
         return self
 
     def make_ring_network(self, N, neighbour_range=1):
