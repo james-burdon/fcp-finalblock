@@ -4,11 +4,6 @@ import matplotlib.cm as cm
 import random
 import argparse
 
-# required for the animation of the network version of the defuant model
-# from matplotlib.animation import FuncAnimation
-from matplotlib.animation import ArtistAnimation
-plt.ion() #use of plt.ion() to plot  live updates on figures as seen in task 5 animate 
-
 class Node:
 
     def __init__(self, value, number, connections=None):
@@ -17,7 +12,7 @@ class Node:
         self.value = value
 
     def __repr__(self):  
-        # built in function so that the list with objects 
+        # built-in function so that the list with objects 
         # displays a more understandable format
         return ("Node %d has value %d" % (self.index, self.value))
     
@@ -35,7 +30,8 @@ class Node:
                 if connection == 1]
 
 
-class Queue:  # queue class imported from previous assignments
+# queue class imported from previous assignments
+class Queue:  
     def __init__(self):
         self.queue = []
 
@@ -66,26 +62,27 @@ class Network:
         Returns:
             avg number of neighbours
         """
-        total = 0
+        neighbour_sum = 0
         for node in self.nodes:
-            total += len(node.get_neighbours())
+            neighbour_sum += len(node.get_neighbours())
         
         # return mean 
-        return total / len(self.nodes)  
+        return neighbour_sum / len(self.nodes)  
 
     # question 2 for task 3, uses breadth-first search to find the mean path 
     # from one node to all others
     def get_mean_path_length(self):
-        """ find average distance from one node to every other node, checking isolation of node
+        """ find average distance from one node to every other node, 
+        and checking isolation of node
 
         Returns:
             the isolation of a node
         """
-        total = 0
+        nodes_mean_path_length_sum = 0 #sum of all mean path_length of nodes
 
         # for every node
         for node in self.nodes:  
-            total1 = 0
+            single_node_sum = 0 #sum of path lengths of one node to all nodes
 
             # for every different node than the one looped through
             for elem in self.nodes:
@@ -127,12 +124,12 @@ class Network:
                     # add the start node to the route
                     route.append(node_to_check)
 
-                    total2 = len(route) - 1
+                    path_length = len(route) - 1
 
                     # sums to compute the average
-                    total1 += total2  
-            total += total1 / (len(self.nodes) - 1)
-        return total / len(self.nodes)
+                    single_node_sum += path_length  
+            nodes_mean_path_length_sum += single_node_sum / (len(self.nodes) - 1)
+        return nodes_mean_path_length_sum / len(self.nodes)
 
     # question 3 for task 3, clustering coefficient
     def get_mean_clustering(self):
@@ -141,7 +138,7 @@ class Network:
         Returns:
             value of opinion calculated
         """
-        count = 0
+        mean_count = 0 #sum of all the means used to find mean clustering at the end
 
         # for all nodes
         for node in self.nodes:  
@@ -155,8 +152,8 @@ class Network:
             # exclude 0 connections as cannot divide by 0 at the end
             if possible_connection != 0:
                 # count of edges between neighbours
-                count1 = 0  
-                Biglist = []
+                edge_count = 0  
+                Connection_list = [] #2 Dimension list with every single node an its neighbours
                 # list to check for same edges such as 1-0 and 0-1
                 edges = []
 
@@ -168,19 +165,20 @@ class Network:
                 # to the Biglist
                 for neighbour in neighbour_list:
                     # neighbours of these nodes
-                    Biglist.append((neighbour, 
+                    Connection_list.append((neighbour, 
                                     self.nodes[neighbour].get_neighbours()))
 
                 # for every neighbour of neighbour
-                for item in Biglist:
+                for item in Connection_list:
                     for thing in item[1]:
                         if thing in neighbour_list and \
                             {thing, item[0]} not in edges:  
                             # use of sets for this
-                            count1 += 1
+                            edge_count += 1
                             edges += [{thing, item[0]}]
-                count += count1 / possible_connection
-        return count / len(self.nodes)
+                mean_count += edge / possible_connection
+
+        return mean_count / len(self.nodes) #gives mean clustering
 
     def make_random_network(self, N, connection_probability=0.5):
         '''
@@ -207,38 +205,48 @@ class Network:
 
         Args:
             N (int): the number of nodes in the network
-            neighbour_range (int, optional): how many neighbours are examined. Defaults to 1.
+            neighbour_range (int, optional): how many neighbours are examined. 
+                                             Defaults to 1.
 
         Returns:
             updated network
         """
+        # empty list of nodes
         self.nodes = []
+
+        # make as many nodes as required
         for node_number in range(N):
+            # start off with 0 connections
             connections = [0 for _ in range(N)]
+
+            # add connections for each distance away, up to neighbour range
             for distance in range(1, neighbour_range + 1):
                 connections[(node_number - distance) % N] = 1
                 connections[(node_number + distance) % N] = 1
             new_node = Node(np.random.random(), node_number, connections)
+
+            # add to nodes list of network
             self.nodes.append(new_node)
 
+        # return the generated network
         return self
 
     # small world network for task 4
     def make_small_world_nw(self, N, re_wire_prob=0.2):
         """ forms a network for the small world model
 
-        ------- commented out is a counting mechanism for the network model which we were advised not to delete
+        ------- commented out is a counting mechanism for the network model 
 
         Args:
             N (int): the number of nodes in the network
-            re_wire_prob (float, optional): probability of the network connections being changed. Defaults to 0.2.
+            re_wire_prob (float, optional): probability of the network 
+            connections being changed. Defaults to 0.2.
 
         Returns:
             updated network
         """
         # start with a ring network with neighbour range 2
         starting_network = self.make_ring_network(N, neighbour_range=2)
-        starting_network.plot()
 
         # connection counting script:
 
@@ -292,15 +300,18 @@ class Network:
         """ plots the inputted network
 
         Args:
-            showplot (bool, optional): Determines whether plot is displayed. Defaults to True.
+            for_animation (figure object, optional): figure to plot on for the
+            animation in task 5. Defaults to None for the other tasks
 
         Returns:
             the updated figure
         """
 
+        # parse the arguments to add the correct title to the graph
         args = arg_setup()
 
-        if not for_animation: #argument in the function to check if animation is required or not
+        # argument in the function to check if animation is required or not
+        if not for_animation: 
             fig = plt.figure()
         else:
             fig = for_animation
@@ -308,6 +319,7 @@ class Network:
         ax = fig.add_subplot(111)
         ax.set_axis_off()
 
+        # add the correct title to the graph
         if args.ring_network:
             ax.set_title("Ring Network")
         elif args.small_world:
@@ -334,8 +346,7 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), 
                             color='black')
-        
-        plt.show()
+                    
 
 def test_networks():
     """ test function for the networks models
@@ -506,15 +517,16 @@ def ising_main(population, alpha, external=0.0):
     """ runs related functions and plots the result
 
     Args:
-        population (numpy array): array containing the opinions of populace examined
-        alpha (float): represents tolerance of society of those who disagree with their neighbours
-        external (float, optional): introduces external opinions to the system. Defaults to 0.0.
+        population (numpy array): array containing the opinions of population
+        alpha (float): represent tolerance of those who disagree with neighbours
+        external (float, optional): introduces external opinions to the system.
+                                    Defaults to 0.0
     """
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
-    ax.set_title(f"External: {format(external,'.3f')}, \
+    ax.set_title(f"External: {format(external,'.3f')} \
                  Alpha: {format(alpha,'.3f')}")
 
     # Iterating an update 100 times
@@ -576,7 +588,7 @@ def random_person_and_neighbour(grid_size=100):
     """ randomly selects person and a random neighbour of theirs
 
     Args:
-        grid_size (int, optional): determines no. of villagers. Defaults to 100.
+        grid_size (int, optional): determines no. of villagers. Defaults to 100
 
     Returns:
         indexes of random person and their random neighbour
@@ -601,9 +613,9 @@ def opinion_defuant(grid, rand_person, rand_neighbour, threshold,
     Args:
         grid (array): the array of each person's opinion
         rand_person (int): index of the person being examined
-        rand_neighbour (int): index of the random neighbour of person being examined
-        threshold (float): the threshold for opinion difference, defined by the flags
-        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
+        rand_neighbour (int): index of the random neighbour being examined
+        threshold (float): the threshold for opinion difference, defined by flag
+        coupling_parameter (float): aka beta, set by -beta flag, for equation
 
     Returns:
         updated grid (array), with new opinions for person and neighbour
@@ -649,9 +661,9 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     """ code for the defuant model; calls on related functions and plots results
 
     Args:
-        threshold (float): the threshold for opinion difference, defined by the flags
-        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
-        timesteps (int, optional): arbitrary representation of no. of interactions.
+        threshold (float): the threshold for opinion difference, defined by flag
+        coupling_parameter (float): aka beta, set by -beta flag, for equation
+        timesteps (int, optional): arbitrary no. of interactions
     """
     # Creates grid of 100 people
     grid = np.random.rand(1, 100)[0]
@@ -689,77 +701,94 @@ def defuant_main(threshold, coupling_parameter, timesteps=100):
     plt.tight_layout()
     plt.show()
 
-def defuant_network(network, size, threshold, coupling_parameter):
-    """ Turns the defuant model into a network
+def update_network(network, size, threshold, coupling_parameter):
+    """ Updates the network for the time interval
 
     Args:
         network (network): the network class
         size (integer): determines number of nodes in network
         threshold (float): the threshold defined by the flags
-        coupling_parameter (float): also known as beta, set by the -beta flag, used in equations
+        coupling_parameter (float): aka beta, set by -beta flag, for equation
 
     Returns:
         updated network
     """
-    #network = Network().make_small_world_nw(size)
-    #print(network.nodes)
 
-    #fig = plt.figure()
-
-    #for node in network.nodes:
+    # select a random node
     random_node_selected = np.random.randint(0, size)
-    #random_node = network.nodes[random_node_selected]
 
-    # determines whether the neighbour will the right or the left
+    # determines whether the neighbour will be to the right or the left
     decide_rand_neighbour = random.randint(1, 2)
+
     # sets the index of the neighbour using circular boundaries
     if decide_rand_neighbour == 1:
         rand_neighbour_selected = (random_node_selected - 1) % size
     else:
         rand_neighbour_selected = (random_node_selected + 1) % size
 
-    #rand_neighbour = network.nodes[rand_neighbour_selected]
-        
     # updates network with new opinions
     network.nodes = opinion_defuant(network.nodes, random_node_selected, 
                                     rand_neighbour_selected, threshold, 
                                     coupling_parameter)
 
-    #print(network.nodes)
     return network
 
-def update_animation(network, size, threshold, coupling_parameter):
-    """ the function which updates the animation for each timestep
-
-    Args:
-        frame (int): the frame examined
-        network (network): the network examined
-        size (int): sets number of nodes in network
-        threshold (float): the threshold for opinion difference, defined by the flags
-        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
-    """
-    network = defuant_network(network, size, threshold, coupling_parameter)
-
-    return network
-
-def animate_defuant_network(size, threshold, coupling_parameter):
-    """ should produce animation of how the defuant network changes with time
+def defuant_network(size, threshold, coupling_parameter, timesteps=120):
+    """ Produces animation of how the defuant network changes with time. Also
+        plots the mean opinion over time for the network
 
     Args:
         size (int): no. of nodes in network
-        threshold (float): the threshold for opinion difference, defined by the flags
-        coupling_parameter (float): also known as beta, set by -beta flag, used in equations
+        threshold (float): the threshold for opinion difference, defined by flag
+        coupling_parameter (float): aka beta, set by -beta flag, for equations
+        timesteps (int): arbitrary number of timesteps to animate and calculate
+                         for. Defaults to 120
     """
+
     network = Network().make_small_world_nw(size)
     fig = plt.figure()
-    network.plot(for_animation = fig) #argument for animation 
-    
-    for i in range(240):
-        network = update_animation(network, size, threshold, coupling_parameter)
-        fig.suptitle("Frame " + str(i)) #displays title
-        network.plot(for_animation = fig)
-        plt.pause(0.01)
 
+    # empty count of mean opinions
+    mean_opinions = []
+
+    # run for an arbitrary number of timesteps
+    for i in range(timesteps):
+
+        # calculate the mean opinion of the network and store it
+        mean_opinion = sum([node.value for node in network.nodes]) / size
+        mean_opinions.append(mean_opinion)
+
+        # update the network for the next time interval
+        network = update_network(network, size, threshold, coupling_parameter)
+
+        # clear the current figure for efficiency
+        fig.clf()
+
+        # for_animation required for the animation to run
+        network.plot(for_animation = fig)
+
+        # adds a title
+        fig.suptitle("Frame " + str(i)) 
+
+        plt.pause(0.1)
+
+    # plot the mean opinion over time
+    plt.figure()
+    time_array = [i for i in range(timesteps)]
+
+    # turn off interactive mode
+    plt.ioff()
+
+    # clear the last frame of the animation
+    plt.cla()
+
+    # plot graph of mean opinion over time
+    plt.plot(time_array, mean_opinions)
+    plt.xlabel("Time")
+    plt.ylabel("Mean opinion")
+    plt.title("Mean opinion over time")
+
+    # show the graph
     plt.show()
 
 def test_defuant():
@@ -854,8 +883,7 @@ def arg_setup():
                         help="-threshold sets the value of the threshold for \
                           accepted opinion difference for the defuant model")
 
-    # ring_network stuff
-    # network size argument, integer value, by default 10
+    # ring_network
     parser.add_argument("-ring_network", type=int,
                         help="-ring_network determines no. of nodes in network") 
     parser.add_argument("-small_world", type=int,
@@ -869,7 +897,20 @@ def arg_setup():
                         help="-use_network converts the defuant model \
                             to a network and calculates accordingly")
 
+    # parse arguments for usage
     args = parser.parse_args()
+
+    # check that values for beta and threshold are valid
+    assert args.beta >= 0, "coupling parameter must be >= 0"
+    assert args.threshold >= 0, "opinion threshold must be >= 0"
+
+    # check that the network sizes entered are valid
+    if args.ring_network:
+        assert args.ring_network > 0, "network size must be greater than 0"
+    if args.small_world:
+        assert args.small_world > 0, "network size must be greater than 0"
+
+    # check that the rewire probability entered is a probability
     assert 0 <= args.re_wire <= 1, 're_wire is a probability, \
         thus must be between 0 and 1'
 
@@ -889,12 +930,13 @@ def main():
     # runs defuant model if flag detected
     if args.defuant:  
         if not args.use_network:
-            plt.ioff() #plt.i will crash single plots as in the defuant case
+            # plt.ion will crash single plots as in the defuant case
+            plt.ioff() 
             defuant_main(args.threshold, args.beta)
         else:
-            plt.ion() #need for the animation
-            #defuant_network(args.use_network, args.threshold, args.beta)
-            animate_defuant_network(args.use_network, args.threshold, args.beta)
+            # needed for the animation
+            plt.ion() 
+            defuant_network(args.use_network, args.threshold, args.beta)
 
     # tests for ising model if flag detected
     if args.test_ising:  
@@ -919,15 +961,17 @@ def main():
         print('Clustering co-efficient:', network.get_mean_clustering())
 
     # runs ring networks modelling stuff if flag detected
-    if args.ring_network: 
-        plt.ioff() #same case as the defuant graph
-        ring_network = Network().make_ring_network(20, 3)
+    if args.ring_network:
+        #same case as the defuant graph
+        plt.ioff() 
+        ring_network = Network().make_ring_network(args.ring_network, 3)
         ring_network.plot()
 
     # runs small world code if flag detected
     if args.small_world:  
         plt.ioff()
-        small_world_network = Network().make_small_world_nw(20, args.re_wire)
+        small_world_network = Network().make_small_world_nw(args.small_world,
+                                                             args.re_wire)
         small_world_network.plot()
 
 
