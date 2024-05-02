@@ -34,7 +34,7 @@ The flags that can be used include:
 
 ### Networks
 
-- `-network` to set the size of a network
+- `-network` to set the size of a network (default neighbour range = 1)
 - `-test_network` to test the calculations for mean degree,
 path length and clustering calculations
 - `-ring_network` to set the number of nodes in a ring network
@@ -114,5 +114,5 @@ that certain flags entered are valid
 - `make_small_world` includes a commented out edge-counting script. This
 script counts the number of edges the network starts with, the number of rewires
 that occur, and the number of edges after the rewiring. The number of edges are
-the same before and after the rewiring. 
+the same before and after the rewiring.
 **All lines in this function need to be uncommented for it to work**

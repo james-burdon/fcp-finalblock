@@ -967,7 +967,7 @@ def main():
     if args.ring_network:
         #same case as the defuant graph
         plt.ioff() 
-        ring_network = Network().make_ring_network(args.ring_network, 3)
+        ring_network = Network().make_ring_network(args.ring_network, 1)
         ring_network.plot()
 
     # runs small world code if flag detected
