@@ -85,11 +85,11 @@ class Network:
             single_node_sum = 0 #sum of path lengths of one node to all nodes
 
             # for every different node than the one looped through
-            for elem in self.nodes:
-                if elem != node:  
+            for element in self.nodes:
+                if element != node:  
                     
                     start_node = node
-                    goal = elem
+                    goal = element
                     search_queue = Queue()
                     search_queue.push(node)
                     visited = []
@@ -167,15 +167,14 @@ class Network:
                                     self.nodes[neighbour].get_neighbours()))
 
                 # for every neighbour of neighbour
-                for item in connection_list:
-                    for thing in item[1]:
-                        if thing in neighbour_list and \
-                            {thing, item[0]} not in edges:  
+                for connection in connection_list:
+                    for other_node in connection[1]:
+                        if other_node in neighbour_list and \
+                            {other_node, connection[0]} not in edges:  
                             # use of sets for this
                             edge_count += 1
-                            edges += [{thing, item[0]}]
+                            edges += [{other_node, connection[0]}]
                 mean_count += len(edges) / possible_connection
-
 
         # return the mean clustering
         return mean_count / len(self.nodes)
@@ -912,6 +911,8 @@ def arg_setup():
         assert args.ring_network > 0, "network size must be greater than 0"
     if args.small_world:
         assert args.small_world > 0, "network size must be greater than 0"
+    if args.use_network:
+        assert args.use_network > 0, "network size must be greater than 0"
 
     # check that the rewire probability entered is a probability
     assert 0 <= args.re_wire <= 1, 're_wire is a probability, \
@@ -967,7 +968,7 @@ def main():
     if args.ring_network:
         #same case as the defuant graph
         plt.ioff() 
-        ring_network = Network().make_ring_network(args.ring_network, 1)
+        ring_network = Network().make_ring_network(args.ring_network)
         ring_network.plot()
 
     # runs small world code if flag detected
