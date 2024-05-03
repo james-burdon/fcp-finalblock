@@ -720,8 +720,9 @@ def update_network(network, size, threshold, coupling_parameter):
     random_node_selected = np.random.randint(0, size)
 
     #select a random neighbour of this node
-    rand_neighbour_selected = np.random.choice(network.nodes
-                                            [random_node_selected].connections)
+    rand_neighbour_selected = np.random.choice([index for index, connection in 
+                enumerate(network.nodes[random_node_selected].connections) if 
+                connection == 1])
 
     # updates network with new opinions
     network.nodes = opinion_defuant(network.nodes, random_node_selected, 
