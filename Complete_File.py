@@ -731,7 +731,7 @@ def update_network(network, size, threshold, coupling_parameter):
 
     return network
 
-def defuant_network(size, threshold, coupling_parameter, timesteps=120):
+def defuant_network(size, threshold, coupling_parameter, timesteps=360):
     """ Produces animation of how the defuant network changes with time. Also
         plots the mean opinion over time for the network
 
