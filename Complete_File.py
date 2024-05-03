@@ -719,14 +719,9 @@ def update_network(network, size, threshold, coupling_parameter):
     # select a random node
     random_node_selected = np.random.randint(0, size)
 
-    # determines whether the neighbour will be to the right or the left
-    decide_rand_neighbour = random.randint(1, 2)
-
-    # sets the index of the neighbour using circular boundaries
-    if decide_rand_neighbour == 1:
-        rand_neighbour_selected = (random_node_selected - 1) % size
-    else:
-        rand_neighbour_selected = (random_node_selected + 1) % size
+    #select a random neighbour of this node
+    rand_neighbour_selected = np.random.choice(network.nodes
+                                            [random_node_selected].connections)
 
     # updates network with new opinions
     network.nodes = opinion_defuant(network.nodes, random_node_selected, 
